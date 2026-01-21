@@ -53,8 +53,23 @@ connect)
   psql -h localhost -p 5431 -U $POSTGRES_USER -d $POSTGRES_DB
   ;;
 
+migrate)
+  cd sql/schema
+  goose postgres postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5431/$POSTGRES_DB up
+  cd ..
+  cd ..
+  ;;
+
+revert)
+  cd sql/schema
+  goose postgres postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5431/$POSTGRES_DB down
+  cd ..
+  cd ..
+  ;;
+
+
 *)
-  echo "usage: ./db.sh start|stop|logs"
+  echo "usage: ./db.sh start|stop|delete|logs|connect|migrate|revert"
   exit 1
   ;;
 esac
