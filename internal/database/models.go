@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type User struct {
+type Customer struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
