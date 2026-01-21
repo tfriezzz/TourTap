@@ -38,7 +38,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/health", http.HandlerFunc(apiCfg.handlerReadiness))
+	mux.Handle("/api/health", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerReadiness)))
 
 	srv := &http.Server{
 		Addr:    ":" + port,
