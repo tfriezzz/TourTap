@@ -1,10 +1,12 @@
 -- name: CreateCustomer :one
-INSERT INTO customers (id, created_at, updated_at, email)
+INSERT INTO customers (id, created_at, updated_at, email, name, status)
 VALUES (
   gen_random_uuid(),
   NOW(),
   NOW(),
-  $1
+  $1,
+  $2,
+  'unhandled'
   )
 RETURNING *;
 

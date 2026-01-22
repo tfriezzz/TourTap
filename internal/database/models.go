@@ -5,14 +5,61 @@
 package database
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+type CustomerStatus string
+
+const (
+	CustomerStatusUnhandled      CustomerStatus = "unhandled"
+	CustomerStatusPaymentPending CustomerStatus = "payment_pending"
+	CustomerStatusConfirmed      CustomerStatus = "confirmed"
+)
+
+func (e *CustomerStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = CustomerStatus(s)
+	case string:
+		*e = CustomerStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for CustomerStatus: %T", src)
+	}
+	return nil
+}
+
+type NullCustomerStatus struct {
+	CustomerStatus CustomerStatus
+	Valid          bool // Valid is true if CustomerStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullCustomerStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.CustomerStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.CustomerStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullCustomerStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.CustomerStatus), nil
+}
 
 type Customer struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Email     string
+	Name      string
+	Status    CustomerStatus
 }

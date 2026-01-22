@@ -10,24 +10,33 @@ import (
 )
 
 const createCustomer = `-- name: CreateCustomer :one
-INSERT INTO customers (id, created_at, updated_at, email)
+INSERT INTO customers (id, created_at, updated_at, email, name, status)
 VALUES (
   gen_random_uuid(),
   NOW(),
   NOW(),
-  $1
+  $1,
+  $2,
+  'unhandled'
   )
-RETURNING id, created_at, updated_at, email
+RETURNING id, created_at, updated_at, email, name, status
 `
 
-func (q *Queries) CreateCustomer(ctx context.Context, email string) (Customer, error) {
-	row := q.db.QueryRowContext(ctx, createCustomer, email)
+type CreateCustomerParams struct {
+	Email string
+	Name  string
+}
+
+func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error) {
+	row := q.db.QueryRowContext(ctx, createCustomer, arg.Email, arg.Name)
 	var i Customer
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
+		&i.Name,
+		&i.Status,
 	)
 	return i, err
 }
@@ -42,7 +51,7 @@ func (q *Queries) DeleteAllCustomers(ctx context.Context) error {
 }
 
 const getCustomerByEmail = `-- name: GetCustomerByEmail :one
-SELECT id, created_at, updated_at, email FROM customers
+SELECT id, created_at, updated_at, email, name, status FROM customers
 WHERE email = $1
 `
 
@@ -54,6 +63,8 @@ func (q *Queries) GetCustomerByEmail(ctx context.Context, email string) (Custome
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
+		&i.Name,
+		&i.Status,
 	)
 	return i, err
 }
