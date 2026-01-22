@@ -7,28 +7,41 @@ package database
 
 import (
 	"context"
+	"time"
 )
 
 const createCustomer = `-- name: CreateCustomer :one
-INSERT INTO groups (id, created_at, updated_at, email, name, status)
+INSERT INTO groups (id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date)
 VALUES (
   gen_random_uuid(),
   NOW(),
   NOW(),
   $1,
   $2,
-  'unhandled'
+  $3,
+  'unhandled',
+  $4,
+  $5
   )
 RETURNING id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date
 `
 
 type CreateCustomerParams struct {
-	Email string
-	Name  string
+	Email           string
+	Name            string
+	Pax             int32
+	RequestedTourID int32
+	RequestedDate   time.Time
 }
 
 func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Group, error) {
-	row := q.db.QueryRowContext(ctx, createCustomer, arg.Email, arg.Name)
+	row := q.db.QueryRowContext(ctx, createCustomer,
+		arg.Email,
+		arg.Name,
+		arg.Pax,
+		arg.RequestedTourID,
+		arg.RequestedDate,
+	)
 	var i Group
 	err := row.Scan(
 		&i.ID,

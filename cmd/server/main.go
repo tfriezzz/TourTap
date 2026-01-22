@@ -39,7 +39,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.Handle("/api/health", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerReadiness)))
-	mux.Handle("POST /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerCustomersCreate)))
+	mux.Handle("POST /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupCreate)))
 
 	srv := &http.Server{
 		Addr:    ":" + port,

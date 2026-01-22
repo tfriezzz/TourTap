@@ -1,12 +1,15 @@
 -- name: CreateCustomer :one
-INSERT INTO groups (id, created_at, updated_at, email, name, status)
+INSERT INTO groups (id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date)
 VALUES (
   gen_random_uuid(),
   NOW(),
   NOW(),
   $1,
   $2,
-  'unhandled'
+  $3,
+  'unhandled',
+  $4,
+  $5
   )
 RETURNING *;
 

@@ -14,9 +14,9 @@ CREATE TABLE groups (
   pax INTEGER NOT NULL,
   status group_status NOT NULL DEFAULT 'unhandled',
   requested_tour_id INTEGER NOT NULL,
-  requested_date DATE NOT NULL,
-  
-  FOREIGN KEY (requested_tour_id) REFERENCES tours(id)
+  requested_date DATE NOT NULL
+
+  -- FOREIGN KEY (requested_tour_id) REFERENCES tours(id)
 );
 
 
