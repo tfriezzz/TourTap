@@ -1,5 +1,5 @@
 -- name: CreateCustomer :one
-INSERT INTO customers (id, created_at, updated_at, email, name, status)
+INSERT INTO groups (id, created_at, updated_at, email, name, status)
 VALUES (
   gen_random_uuid(),
   NOW(),
@@ -12,9 +12,9 @@ RETURNING *;
 
 
 -- name: DeleteAllCustomers :exec
-DELETE FROM customers;
+DELETE FROM groups;
 
 
 -- name: GetCustomerByEmail :one
-SELECT * FROM customers
+SELECT * FROM groups
 WHERE email = $1;

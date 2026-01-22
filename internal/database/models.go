@@ -12,54 +12,66 @@ import (
 	"github.com/google/uuid"
 )
 
-type CustomerStatus string
+type GroupStatus string
 
 const (
-	CustomerStatusUnhandled      CustomerStatus = "unhandled"
-	CustomerStatusPaymentPending CustomerStatus = "payment_pending"
-	CustomerStatusConfirmed      CustomerStatus = "confirmed"
+	GroupStatusUnhandled      GroupStatus = "unhandled"
+	GroupStatusPaymentPending GroupStatus = "payment_pending"
+	GroupStatusConfirmed      GroupStatus = "confirmed"
+	GroupStatusCancelled      GroupStatus = "cancelled"
 )
 
-func (e *CustomerStatus) Scan(src interface{}) error {
+func (e *GroupStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CustomerStatus(s)
+		*e = GroupStatus(s)
 	case string:
-		*e = CustomerStatus(s)
+		*e = GroupStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CustomerStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for GroupStatus: %T", src)
 	}
 	return nil
 }
 
-type NullCustomerStatus struct {
-	CustomerStatus CustomerStatus
-	Valid          bool // Valid is true if CustomerStatus is not NULL
+type NullGroupStatus struct {
+	GroupStatus GroupStatus
+	Valid       bool // Valid is true if GroupStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCustomerStatus) Scan(value interface{}) error {
+func (ns *NullGroupStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.CustomerStatus, ns.Valid = "", false
+		ns.GroupStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CustomerStatus.Scan(value)
+	return ns.GroupStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCustomerStatus) Value() (driver.Value, error) {
+func (ns NullGroupStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CustomerStatus), nil
+	return string(ns.GroupStatus), nil
 }
 
-type Customer struct {
-	ID        uuid.UUID
+type Group struct {
+	ID              uuid.UUID
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	Email           string
+	Name            string
+	Pax             int32
+	Status          GroupStatus
+	RequestedTourID int32
+	RequestedDate   time.Time
+}
+
+type Tour struct {
+	ID        int32
+	Name      string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Email     string
-	Name      string
-	Status    CustomerStatus
+	BasePrice string
 }
