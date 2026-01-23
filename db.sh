@@ -67,9 +67,13 @@ revert)
   cd ..
   ;;
 
+reset-groups)
+  curl -X POST http://localhost:8080/admin/reset-groups
+  ;;
+
 
 *)
-  echo "usage: ./db.sh start|stop|delete|logs|connect|migrate|revert"
+  echo "usage: ./db.sh start|stop|delete|logs|connect|migrate|revert|reset-groups"
   exit 1
   ;;
 esac

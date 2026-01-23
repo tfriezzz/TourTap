@@ -37,7 +37,7 @@ func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	newGroupParams := database.CreateCustomerParams{
+	newGroupParams := database.CreateGroupParams{
 		Email:           params.Email,
 		Name:            params.Name,
 		Pax:             params.Pax,
@@ -45,7 +45,7 @@ func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request)
 		RequestedDate:   params.RequestedDate,
 	}
 
-	group, err := cfg.db.CreateCustomer(r.Context(), newGroupParams)
+	group, err := cfg.db.CreateGroup(r.Context(), newGroupParams)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "could not create group", err)
 		return

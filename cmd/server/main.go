@@ -40,6 +40,8 @@ func main() {
 
 	mux.Handle("/api/health", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerReadiness)))
 	mux.Handle("POST /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupCreate)))
+	mux.Handle("POST /admin/tours", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerTourCreate)))
+	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupReset)))
 
 	srv := &http.Server{
 		Addr:    ":" + port,

@@ -1,4 +1,4 @@
--- name: CreateCustomer :one
+-- name: CreateGroup :one
 INSERT INTO groups (id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date)
 VALUES (
   gen_random_uuid(),
@@ -14,10 +14,10 @@ VALUES (
 RETURNING *;
 
 
--- name: DeleteAllCustomers :exec
+-- name: DeleteAllGroups :exec
 DELETE FROM groups;
 
 
--- name: GetCustomerByEmail :one
+-- name: GetGroupByEmail :one
 SELECT * FROM groups
 WHERE email = $1;

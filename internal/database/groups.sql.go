@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const createCustomer = `-- name: CreateCustomer :one
+const createGroup = `-- name: CreateGroup :one
 INSERT INTO groups (id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date)
 VALUES (
   gen_random_uuid(),
@@ -26,7 +26,7 @@ VALUES (
 RETURNING id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date
 `
 
-type CreateCustomerParams struct {
+type CreateGroupParams struct {
 	Email           string
 	Name            string
 	Pax             int32
@@ -34,8 +34,8 @@ type CreateCustomerParams struct {
 	RequestedDate   time.Time
 }
 
-func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Group, error) {
-	row := q.db.QueryRowContext(ctx, createCustomer,
+func (q *Queries) CreateGroup(ctx context.Context, arg CreateGroupParams) (Group, error) {
+	row := q.db.QueryRowContext(ctx, createGroup,
 		arg.Email,
 		arg.Name,
 		arg.Pax,
@@ -57,22 +57,22 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) 
 	return i, err
 }
 
-const deleteAllCustomers = `-- name: DeleteAllCustomers :exec
+const deleteAllGroups = `-- name: DeleteAllGroups :exec
 DELETE FROM groups
 `
 
-func (q *Queries) DeleteAllCustomers(ctx context.Context) error {
-	_, err := q.db.ExecContext(ctx, deleteAllCustomers)
+func (q *Queries) DeleteAllGroups(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, deleteAllGroups)
 	return err
 }
 
-const getCustomerByEmail = `-- name: GetCustomerByEmail :one
+const getGroupByEmail = `-- name: GetGroupByEmail :one
 SELECT id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date FROM groups
 WHERE email = $1
 `
 
-func (q *Queries) GetCustomerByEmail(ctx context.Context, email string) (Group, error) {
-	row := q.db.QueryRowContext(ctx, getCustomerByEmail, email)
+func (q *Queries) GetGroupByEmail(ctx context.Context, email string) (Group, error) {
+	row := q.db.QueryRowContext(ctx, getGroupByEmail, email)
 	var i Group
 	err := row.Scan(
 		&i.ID,

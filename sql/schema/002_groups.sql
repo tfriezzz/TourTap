@@ -5,6 +5,9 @@ CREATE TYPE group_status AS ENUM (
 'confirmed',
 'cancelled');
 
+
+--TODO: handle 0 value for pax + existing id for tour_id
+
 CREATE TABLE groups (
   id UUID PRIMARY KEY,
   created_at TIMESTAMP NOT NULL,
@@ -14,9 +17,9 @@ CREATE TABLE groups (
   pax INTEGER NOT NULL,
   status group_status NOT NULL DEFAULT 'unhandled',
   requested_tour_id INTEGER NOT NULL,
-  requested_date DATE NOT NULL
+  requested_date DATE NOT NULL,
 
-  -- FOREIGN KEY (requested_tour_id) REFERENCES tours(id)
+  FOREIGN KEY (requested_tour_id) REFERENCES tours(id)
 );
 
 
