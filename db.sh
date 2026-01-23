@@ -45,6 +45,8 @@ logs)
   ;;
 
 delete)
+  docker stop "$CONTAINER_NAME"
+  docker rm "$CONTAINER_NAME"
   sudo rm -rf pgdata
   echo "pgdata deleted"
   ;;

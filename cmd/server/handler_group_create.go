@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -51,6 +52,22 @@ func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	// Booking
+	getBookingParams := database.GetBookingByTourDateParams{
+		TourID: group.RequestedTourID,
+		Date:   group.RequestedDate,
+	}
+
+	booking, err := cfg.db.GetBookingByTourDate(r.Context(), getBookingParams)
+	if booking.ID == 0 {
+		newBookingParams := database.CreateBookingParams{
+			TourID: group.RequestedTourID,
+			Date:   group.RequestedDate,
+		}
+		cfg.db.CreateBooking(r.Context(), newBookingParams)
+	}
+	// Booking
+
 	respondWithJSON(w, http.StatusCreated, Group{
 		ID:              group.ID,
 		CreatedAt:       group.CreatedAt,
@@ -62,4 +79,5 @@ func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request)
 		RequestedTourID: group.RequestedTourID,
 		RequestedDate:   group.RequestedDate,
 	})
+	log.Printf("group %v created\n", group.Email)
 }

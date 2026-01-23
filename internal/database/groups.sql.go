@@ -23,7 +23,7 @@ VALUES (
   $4,
   $5
   )
-RETURNING id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date
+RETURNING id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date, booking_id
 `
 
 type CreateGroupParams struct {
@@ -53,6 +53,7 @@ func (q *Queries) CreateGroup(ctx context.Context, arg CreateGroupParams) (Group
 		&i.Status,
 		&i.RequestedTourID,
 		&i.RequestedDate,
+		&i.BookingID,
 	)
 	return i, err
 }
@@ -67,7 +68,7 @@ func (q *Queries) DeleteAllGroups(ctx context.Context) error {
 }
 
 const getGroupByEmail = `-- name: GetGroupByEmail :one
-SELECT id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date FROM groups
+SELECT id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date, booking_id FROM groups
 WHERE email = $1
 `
 
@@ -84,6 +85,7 @@ func (q *Queries) GetGroupByEmail(ctx context.Context, email string) (Group, err
 		&i.Status,
 		&i.RequestedTourID,
 		&i.RequestedDate,
+		&i.BookingID,
 	)
 	return i, err
 }

@@ -5,6 +5,7 @@
 package database
 
 import (
+	"database/sql"
 	"database/sql/driver"
 	"fmt"
 	"time"
@@ -100,12 +101,11 @@ func (ns NullGroupStatus) Value() (driver.Value, error) {
 }
 
 type Booking struct {
-	ID        uuid.UUID
+	ID        int32
+	TourID    int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Date      time.Time
-	Status    BookingStatus
-	GroupID   uuid.UUID
 }
 
 type Group struct {
@@ -118,6 +118,7 @@ type Group struct {
 	Status          GroupStatus
 	RequestedTourID int32
 	RequestedDate   time.Time
+	BookingID       sql.NullInt32
 }
 
 type Tour struct {

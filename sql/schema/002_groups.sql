@@ -16,10 +16,10 @@ CREATE TABLE groups (
   name TEXT NOT NULL,
   pax INTEGER NOT NULL,
   status group_status NOT NULL DEFAULT 'unhandled',
-  requested_tour_id INTEGER NOT NULL,
+  requested_tour_id INTEGER NOT NULL REFERENCES tours(id),
   requested_date DATE NOT NULL,
+  booking_id INTEGER
 
-  FOREIGN KEY (requested_tour_id) REFERENCES tours(id)
 );
 
 
