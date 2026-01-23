@@ -59,12 +59,19 @@ func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request)
 	}
 
 	booking, err := cfg.db.GetBookingByTourDate(r.Context(), getBookingParams)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "could not get booking", err)
+	}
 	if booking.ID == 0 {
 		newBookingParams := database.CreateBookingParams{
 			TourID: group.RequestedTourID,
 			Date:   group.RequestedDate,
 		}
-		cfg.db.CreateBooking(r.Context(), newBookingParams)
+		_, err := cfg.db.CreateBooking(r.Context(), newBookingParams)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "could not create booking", err)
+		}
+		// TODO: Update booking_id in group after booking creation
 	}
 	// Booking
 
