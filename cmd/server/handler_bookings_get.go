@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 )
@@ -16,7 +15,7 @@ type BookingsRow struct {
 }
 
 func (cfg *apiConfig) handlerBookingsGet(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("hi from handler")
+	// fmt.Println("hi from handler")
 	bookings, err := cfg.db.GetBookings(r.Context())
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "could not get bookings", err)

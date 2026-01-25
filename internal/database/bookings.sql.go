@@ -72,7 +72,7 @@ SELECT
   COALESCE(STRING_AGG(g.email, ', '), '') AS attending_groups
 FROM bookings b
 JOIN tours t ON b.tour_id = t.id
-LEFT JOIN groups g ON g.booking_id = b.id AND g.status = 'confirmed'
+LEFT JOIN groups g ON g.booking_id = b.id
 GROUP BY b.id, t.name, b.date
 ORDER BY b.date DESC
 `
