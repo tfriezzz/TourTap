@@ -11,7 +11,7 @@ import (
 )
 
 const createGroup = `-- name: CreateGroup :one
-INSERT INTO groups (id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date)
+INSERT INTO groups (id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date, booking_id)
 VALUES (
   gen_random_uuid(),
   NOW(),
@@ -21,7 +21,8 @@ VALUES (
   $3,
   'unhandled',
   $4,
-  $5
+  $5,
+  $6
   )
 RETURNING id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date, booking_id
 `
@@ -32,6 +33,7 @@ type CreateGroupParams struct {
 	Pax             int32
 	RequestedTourID int32
 	RequestedDate   time.Time
+	BookingID       int32
 }
 
 func (q *Queries) CreateGroup(ctx context.Context, arg CreateGroupParams) (Group, error) {
@@ -41,6 +43,7 @@ func (q *Queries) CreateGroup(ctx context.Context, arg CreateGroupParams) (Group
 		arg.Pax,
 		arg.RequestedTourID,
 		arg.RequestedDate,
+		arg.BookingID,
 	)
 	var i Group
 	err := row.Scan(

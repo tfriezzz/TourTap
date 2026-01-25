@@ -1,7 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -20,6 +22,7 @@ type Group struct {
 	Status          database.GroupStatus `json:"customer_status"`
 	RequestedTourID int32                `json:"requested_tour_id"`
 	RequestedDate   time.Time            `json:"requested_date"`
+	BookingID       int32                `json:"booking_id"`
 }
 
 func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request) {
@@ -38,12 +41,57 @@ func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	getBookingParams := database.GetBookingByTourDateParams{
+		TourID: params.RequestedTourID,
+		Date:   params.RequestedDate,
+	}
+
+	var bookingID int32
+
+	booking, err := cfg.db.GetBookingByTourDate(r.Context(), getBookingParams)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			newBookingParams := database.CreateBookingParams{
+				TourID: params.RequestedTourID,
+				Date:   params.RequestedDate,
+			}
+			newBooking, err := cfg.db.CreateBooking(r.Context(), newBookingParams)
+			if err != nil {
+				respondWithError(w, http.StatusInternalServerError, "could not create booking", err)
+				return
+			}
+			bookingID = newBooking.ID
+
+		} else {
+			respondWithError(w, http.StatusInternalServerError, "could not get booking", err)
+			return
+
+		}
+	} else {
+		bookingID = booking.ID
+	}
+
+	// if booking.ID == 0 {
+	// 	newBookingParams := database.CreateBookingParams{
+	// 		TourID: params.RequestedTourID,
+	// 		Date:   params.RequestedDate,
+	// 	}
+	// 	newBooking, err := cfg.db.CreateBooking(r.Context(), newBookingParams)
+	// 	if err != nil {
+	// 		respondWithError(w, http.StatusInternalServerError, "could not create booking", err)
+	// 		return
+	// 	}
+	// 	bookingID = newBooking.ID
+	// } else {
+	// }
+
 	newGroupParams := database.CreateGroupParams{
 		Email:           params.Email,
 		Name:            params.Name,
 		Pax:             params.Pax,
 		RequestedTourID: params.RequestedTourID,
 		RequestedDate:   params.RequestedDate,
+		BookingID:       bookingID,
 	}
 
 	group, err := cfg.db.CreateGroup(r.Context(), newGroupParams)
@@ -51,29 +99,6 @@ func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request)
 		respondWithError(w, http.StatusInternalServerError, "could not create group", err)
 		return
 	}
-
-	// Booking
-	getBookingParams := database.GetBookingByTourDateParams{
-		TourID: group.RequestedTourID,
-		Date:   group.RequestedDate,
-	}
-
-	booking, err := cfg.db.GetBookingByTourDate(r.Context(), getBookingParams)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "could not get booking", err)
-	}
-	if booking.ID == 0 {
-		newBookingParams := database.CreateBookingParams{
-			TourID: group.RequestedTourID,
-			Date:   group.RequestedDate,
-		}
-		_, err := cfg.db.CreateBooking(r.Context(), newBookingParams)
-		if err != nil {
-			respondWithError(w, http.StatusInternalServerError, "could not create booking", err)
-		}
-		// TODO: Update booking_id in group after booking creation
-	}
-	// Booking
 
 	respondWithJSON(w, http.StatusCreated, Group{
 		ID:              group.ID,
@@ -85,6 +110,8 @@ func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request)
 		Status:          group.Status,
 		RequestedTourID: group.RequestedTourID,
 		RequestedDate:   group.RequestedDate,
+		BookingID:       group.BookingID,
 	})
+
 	log.Printf("group %v created\n", group.Email)
 }

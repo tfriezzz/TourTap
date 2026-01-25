@@ -7,12 +7,12 @@ import (
 )
 
 type BookingsRow struct {
-	BookingID       int32     `json:"booking_id"`
-	TourName        string    `json:"tour_name"`
-	Date            time.Time `json:"date"`
-	GroupCount      int64     `json:"group_count"`
-	TotalPax        int64     `json:"total_pax"`
-	AttendingGroups []string  `json:"attending_groups"`
+	BookingID       int32       `json:"booking_id"`
+	TourName        string      `json:"tour_name"`
+	Date            time.Time   `json:"date"`
+	GroupCount      int64       `json:"group_count"`
+	TotalPax        interface{} `json:"total_pax"`
+	AttendingGroups interface{} `json:"attending_groups"`
 }
 
 func (cfg *apiConfig) handlerBookingsGet(w http.ResponseWriter, r *http.Request) {

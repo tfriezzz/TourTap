@@ -18,7 +18,7 @@ CREATE TABLE groups (
   status group_status NOT NULL DEFAULT 'unhandled',
   requested_tour_id INTEGER NOT NULL REFERENCES tours(id),
   requested_date DATE NOT NULL,
-  booking_id INTEGER
+  booking_id INTEGER NOT NULL
 
 );
 

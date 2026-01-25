@@ -5,7 +5,6 @@
 package database
 
 import (
-	"database/sql"
 	"database/sql/driver"
 	"fmt"
 	"time"
@@ -118,7 +117,7 @@ type Group struct {
 	Status          GroupStatus
 	RequestedTourID int32
 	RequestedDate   time.Time
-	BookingID       sql.NullInt32
+	BookingID       int32
 }
 
 type Tour struct {

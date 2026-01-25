@@ -63,17 +63,18 @@ func (q *Queries) GetBookingByTourDate(ctx context.Context, arg GetBookingByTour
 }
 
 const getBookings = `-- name: GetBookings :many
-SELECT 
+SELECT
   b.id AS booking_id,
   t.name AS tour_name,
   b.date,
   COUNT(g.id) AS group_count,
-  SUM(g.pax) AS total_pax,
-  STRING_AGG(g.email, ', ') AS attending_groups
+  COALESCE(SUM(g.pax), 0) AS total_pax,
+  COALESCE(STRING_AGG(g.email, ', '), '') AS attending_groups
 FROM bookings b
 JOIN tours t ON b.tour_id = t.id
 LEFT JOIN groups g ON g.booking_id = b.id AND g.status = 'confirmed'
 GROUP BY b.id, t.name, b.date
+ORDER BY b.date DESC
 `
 
 type GetBookingsRow struct {
@@ -81,8 +82,8 @@ type GetBookingsRow struct {
 	TourName        string
 	Date            time.Time
 	GroupCount      int64
-	TotalPax        int64
-	AttendingGroups []string
+	TotalPax        interface{}
+	AttendingGroups interface{}
 }
 
 func (q *Queries) GetBookings(ctx context.Context) ([]GetBookingsRow, error) {

@@ -1,5 +1,5 @@
 -- name: CreateGroup :one
-INSERT INTO groups (id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date)
+INSERT INTO groups (id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date, booking_id)
 VALUES (
   gen_random_uuid(),
   NOW(),
@@ -9,7 +9,8 @@ VALUES (
   $3,
   'unhandled',
   $4,
-  $5
+  $5,
+  $6
   )
 RETURNING *;
 
@@ -21,3 +22,4 @@ DELETE FROM groups;
 -- name: GetGroupByEmail :one
 SELECT * FROM groups
 WHERE email = $1;
+
