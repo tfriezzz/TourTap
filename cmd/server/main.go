@@ -43,6 +43,7 @@ func main() {
 	mux.Handle("POST /admin/tours", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerTourCreate)))
 	mux.Handle("GET /api/bookings", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGet)))
 	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupReset)))
+	mux.Handle("GET /api/tours", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerToursGet)))
 
 	srv := &http.Server{
 		Addr:    ":" + port,

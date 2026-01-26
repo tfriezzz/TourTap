@@ -10,7 +10,6 @@ import (
 )
 
 const createTour = `-- name: CreateTour :one
-
 INSERT INTO tours (created_at, updated_at, name, base_price)
 VALUES (
   NOW(),
@@ -26,7 +25,6 @@ type CreateTourParams struct {
 	BasePrice string
 }
 
-// NOTE: does id (serial) need input?
 func (q *Queries) CreateTour(ctx context.Context, arg CreateTourParams) (Tour, error) {
 	row := q.db.QueryRowContext(ctx, createTour, arg.Name, arg.BasePrice)
 	var i Tour
@@ -47,6 +45,39 @@ DELETE FROM tours
 func (q *Queries) DeleteAllTours(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, deleteAllTours)
 	return err
+}
+
+const getAllTours = `-- name: GetAllTours :many
+SELECT id, name, created_at, updated_at, base_price FROM tours
+`
+
+func (q *Queries) GetAllTours(ctx context.Context) ([]Tour, error) {
+	rows, err := q.db.QueryContext(ctx, getAllTours)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Tour
+	for rows.Next() {
+		var i Tour
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.BasePrice,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getTourByName = `-- name: GetTourByName :one

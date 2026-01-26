@@ -71,20 +71,6 @@ func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request)
 		bookingID = booking.ID
 	}
 
-	// if booking.ID == 0 {
-	// 	newBookingParams := database.CreateBookingParams{
-	// 		TourID: params.RequestedTourID,
-	// 		Date:   params.RequestedDate,
-	// 	}
-	// 	newBooking, err := cfg.db.CreateBooking(r.Context(), newBookingParams)
-	// 	if err != nil {
-	// 		respondWithError(w, http.StatusInternalServerError, "could not create booking", err)
-	// 		return
-	// 	}
-	// 	bookingID = newBooking.ID
-	// } else {
-	// }
-
 	newGroupParams := database.CreateGroupParams{
 		Email:           params.Email,
 		Name:            params.Name,

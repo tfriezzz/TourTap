@@ -1,5 +1,3 @@
--- NOTE: does id (serial) need input?
-
 -- name: CreateTour :one
 INSERT INTO tours (created_at, updated_at, name, base_price)
 VALUES (
@@ -16,3 +14,6 @@ DELETE FROM tours;
 -- name: GetTourByName :one
 SELECT * FROM tours
 WHERE name = $1;
+
+-- name: GetAllTours :many
+SELECT * FROM tours;
