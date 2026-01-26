@@ -37,6 +37,7 @@ func (cfg *apiConfig) handlerToursCreate(w http.ResponseWriter, r *http.Request)
 	tour, err := cfg.db.CreateTour(r.Context(), newTourParams)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "could not create tour", err)
+		return
 	}
 
 	respondWithJSON(w, http.StatusCreated, Tour{

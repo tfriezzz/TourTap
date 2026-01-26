@@ -19,6 +19,7 @@ func (cfg *apiConfig) handlerBookingsGet(w http.ResponseWriter, r *http.Request)
 	bookings, err := cfg.db.GetBookings(r.Context())
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "could not get bookings", err)
+		return
 	}
 
 	response := make([]BookingsRow, len(bookings))

@@ -60,6 +60,7 @@ type GroupStatus string
 const (
 	GroupStatusPending   GroupStatus = "pending"
 	GroupStatusAccepted  GroupStatus = "accepted"
+	GroupStatusDeclined  GroupStatus = "declined"
 	GroupStatusConfirmed GroupStatus = "confirmed"
 	GroupStatusCancelled GroupStatus = "cancelled"
 )

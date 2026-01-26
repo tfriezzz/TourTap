@@ -118,3 +118,28 @@ func (q *Queries) GroupStatusAccepted(ctx context.Context, id uuid.UUID) (Group,
 	)
 	return i, err
 }
+
+const groupStatusDeclined = `-- name: GroupStatusDeclined :one
+UPDATE groups
+SET status = 'declined'
+WHERE id = $1 AND status = 'pending'
+RETURNING id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date, booking_id
+`
+
+func (q *Queries) GroupStatusDeclined(ctx context.Context, id uuid.UUID) (Group, error) {
+	row := q.db.QueryRowContext(ctx, groupStatusDeclined, id)
+	var i Group
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Email,
+		&i.Name,
+		&i.Pax,
+		&i.Status,
+		&i.RequestedTourID,
+		&i.RequestedDate,
+		&i.BookingID,
+	)
+	return i, err
+}

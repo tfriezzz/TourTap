@@ -5,14 +5,6 @@ import (
 )
 
 func (cfg *apiConfig) handlerToursGet(w http.ResponseWriter, r *http.Request) {
-	// type Tour struct {
-	// 	ID        int32     `json:"id"`
-	// 	Name      string    `json:"name"`
-	// 	CreatedAt time.Time `json:"created_at"`
-	// 	UpdatedAt time.Time `json:"updated_at"`
-	// 	BasePrice string    `json:"base_price"`
-	// }
-
 	tours, err := cfg.db.GetAllTours(r.Context())
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "could not get tours", err)

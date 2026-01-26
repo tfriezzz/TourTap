@@ -29,3 +29,8 @@ SET status = 'accepted'
 WHERE id = $1 AND status = 'pending'
 RETURNING *;
 
+-- name: GroupStatusDeclined :one
+UPDATE groups
+SET status = 'declined'
+WHERE id = $1 AND status = 'pending'
+RETURNING *;

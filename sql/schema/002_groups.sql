@@ -2,6 +2,7 @@
 CREATE TYPE group_status AS ENUM (
 'pending',
 'accepted',
+'declined',
 'confirmed',
 'cancelled');
 

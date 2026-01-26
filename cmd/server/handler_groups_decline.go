@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (cfg *apiConfig) handlerGroupsAccept(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerGroupsDecline(w http.ResponseWriter, r *http.Request) {
 	groupsIDString := r.PathValue("groupID")
 	groupID, err := uuid.Parse(groupsIDString)
 	if err != nil {
@@ -15,9 +15,9 @@ func (cfg *apiConfig) handlerGroupsAccept(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	group, err := cfg.db.GroupStatusAccepted(r.Context(), groupID)
+	group, err := cfg.db.GroupStatusDeclined(r.Context(), groupID)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "could not accept group", err)
+		respondWithError(w, http.StatusInternalServerError, "could not decline group", err)
 		return
 	}
 
@@ -34,5 +34,5 @@ func (cfg *apiConfig) handlerGroupsAccept(w http.ResponseWriter, r *http.Request
 		BookingID:       group.BookingID,
 	})
 
-	log.Printf("tour accepted, sending email with payment details to: %s\n", group.Email)
+	log.Printf("tour declined, sending email to: %s\n", group.Email)
 }
