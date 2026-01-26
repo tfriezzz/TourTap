@@ -97,7 +97,7 @@ func (q *Queries) GetGroupByEmail(ctx context.Context, email string) (Group, err
 const groupStatusAccepted = `-- name: GroupStatusAccepted :one
 UPDATE groups
 SET status = 'accepted'
-WHERE id = $1
+WHERE id = $1 AND status = 'pending'
 RETURNING id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date, booking_id
 `
 

@@ -26,6 +26,6 @@ WHERE email = $1;
 -- name: GroupStatusAccepted :one
 UPDATE groups
 SET status = 'accepted'
-WHERE id = $1
+WHERE id = $1 AND status = 'pending'
 RETURNING *;
 
