@@ -25,7 +25,7 @@ type Group struct {
 	BookingID       int32                `json:"booking_id"`
 }
 
-func (cfg *apiConfig) handlerGroupCreate(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerGroupsCreate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Email           string    `json:"email"`
 		Name            string    `json:"name"`

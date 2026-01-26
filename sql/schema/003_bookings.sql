@@ -20,4 +20,5 @@ CREATE TABLE bookings (
 ALTER TABLE groups ADD CONSTRAINT groups_booking_id FOREIGN KEY (booking_id) REFERENCES bookings(id);
 
 -- +goose Down
+ALTER TABLE groups DROP CONSTRAINT groups_booking_id;
 DROP TABLE bookings;

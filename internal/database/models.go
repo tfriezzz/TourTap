@@ -58,10 +58,10 @@ func (ns NullBookingStatus) Value() (driver.Value, error) {
 type GroupStatus string
 
 const (
-	GroupStatusUnhandled      GroupStatus = "unhandled"
-	GroupStatusPaymentPending GroupStatus = "payment_pending"
-	GroupStatusConfirmed      GroupStatus = "confirmed"
-	GroupStatusCancelled      GroupStatus = "cancelled"
+	GroupStatusPending   GroupStatus = "pending"
+	GroupStatusAccepted  GroupStatus = "accepted"
+	GroupStatusConfirmed GroupStatus = "confirmed"
+	GroupStatusCancelled GroupStatus = "cancelled"
 )
 
 func (e *GroupStatus) Scan(src interface{}) error {

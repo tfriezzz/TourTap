@@ -16,7 +16,7 @@ type Tour struct {
 	BasePrice string    `json:"base_price"`
 }
 
-func (cfg *apiConfig) handlerTourCreate(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerToursCreate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name      string `json:"name"`
 		BasePrice string `json:"base_price"`

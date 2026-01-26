@@ -1,12 +1,10 @@
 -- +goose Up
 CREATE TYPE group_status AS ENUM (
-'unhandled',
-'payment_pending',
+'pending',
+'accepted',
 'confirmed',
 'cancelled');
 
-
---TODO: handle 0 value for pax + existing id for tour_id
 
 CREATE TABLE groups (
   id UUID PRIMARY KEY,
@@ -15,7 +13,7 @@ CREATE TABLE groups (
   email TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
   pax INTEGER NOT NULL,
-  status group_status NOT NULL DEFAULT 'unhandled',
+  status group_status NOT NULL DEFAULT 'pending',
   requested_tour_id INTEGER NOT NULL REFERENCES tours(id),
   requested_date DATE NOT NULL,
   booking_id INTEGER NOT NULL

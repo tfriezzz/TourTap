@@ -2,7 +2,7 @@ package main
 
 import "net/http"
 
-func (cfg *apiConfig) handlerGroupReset(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerGroupsReset(w http.ResponseWriter, r *http.Request) {
 	type response struct {
 		Msg string `json:"msg"`
 	}

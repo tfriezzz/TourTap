@@ -17,3 +17,4 @@ WHERE name = $1;
 
 -- name: GetAllTours :many
 SELECT * FROM tours;
+

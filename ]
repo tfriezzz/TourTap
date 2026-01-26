@@ -39,13 +39,12 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.Handle("/api/health", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerReadiness)))
-	mux.Handle("POST /api/groups/create", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsCreate)))
-	mux.Handle("POST /admin/tours/create", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerToursCreate)))
+	mux.Handle("POST /api/groups", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupCreate)))
+	mux.Handle("POST /admin/tours", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerTourCreate)))
 	mux.Handle("GET /api/bookings", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGet)))
-	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupsReset)))
+	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupReset)))
 	mux.Handle("GET /api/tours", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerToursGet)))
-	mux.Handle("GET /api/pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerPending)))
-	mux.Handle("PUT /api/groups/{groupID}/confirm", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsAccept)))
+	mux.Handle("GET /api/pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGetPendingGroups)))
 
 	srv := &http.Server{
 		Addr:    ":" + port,

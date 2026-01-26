@@ -1,5 +1,5 @@
 -- name: CreateGroup :one
-INSERT INTO groups (id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date, booking_id)
+INSERT INTO groups (id, created_at, updated_at, email, name, pax, requested_tour_id, requested_date, booking_id)
 VALUES (
   gen_random_uuid(),
   NOW(),
@@ -7,7 +7,6 @@ VALUES (
   $1,
   $2,
   $3,
-  'unhandled',
   $4,
   $5,
   $6
@@ -22,4 +21,11 @@ DELETE FROM groups;
 -- name: GetGroupByEmail :one
 SELECT * FROM groups
 WHERE email = $1;
+
+
+-- name: GroupStatusAccepted :one
+UPDATE groups
+SET status = 'accepted'
+WHERE id = $1
+RETURNING *;
 
