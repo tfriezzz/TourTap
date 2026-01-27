@@ -1,0 +1,61 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"time"
+
+	amqp "github.com/rabbitmq/amqp091-go"
+)
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Panicf("%s: %s", msg, err)
+	}
+}
+
+func main() {
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Fatalf("cannot load .env file")
+	// }
+	// rabbitConnString := os.Getenv("RABBITMQ_URL")
+	rabbitConnString := "amqp://guest:guest@localhost:5672/"
+
+	fmt.Printf("connection string: %v\n", rabbitConnString)
+
+	conn, err := amqp.Dial(rabbitConnString)
+	failOnError(err, "failed to connect to RabbitMQ")
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	failOnError(err, "failed to open a channel")
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(
+		"test",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	failOnError(err, "failed to declare a queue")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	body := "this is a test"
+	err = ch.PublishWithContext(
+		ctx,
+		"",
+		q.Name,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(body),
+		})
+	failOnError(err, "failed to publish a message")
+	log.Printf(" [x] sent %s\n", body)
+}
