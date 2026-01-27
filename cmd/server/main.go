@@ -20,11 +20,11 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("cannot load .env file")
 	}
-	port := os.Getenv("PORT")
+	port := os.Getenv("TOURTAP_PORT")
 	if port == "" {
 		log.Fatal("PORT environment variable is not set")
 	}
-	dbURL := os.Getenv("DB_URL")
+	dbURL := os.Getenv("POSTGRES_URL")
 	db, err := sql.Open("postgres", dbURL)
 	dbQueries := database.New(db)
 	if err != nil {
