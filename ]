@@ -22,7 +22,7 @@ func Init() error {
 
 	rabbitConnString := os.Getenv("RABBITMQ_URL")
 	if rabbitConnString == "" {
-		rabbitConnString = "amqp://guest:guest@rabbitmq:5672/"
+		rabbitConnString = "amqp://guest:guest@localhost:5672/"
 		log.Printf("RABBITMQ_URL not set, using default: %s", rabbitConnString)
 	}
 

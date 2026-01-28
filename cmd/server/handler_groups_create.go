@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/tfriezzz/tourtap/internal/database"
+	"github.com/tfriezzz/tourtap/internal/pubsub"
 )
 
 func (cfg *apiConfig) handlerGroupsCreate(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +73,7 @@ func (cfg *apiConfig) handlerGroupsCreate(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, Group{
+	payload := Group{
 		ID:              group.ID,
 		CreatedAt:       group.CreatedAt,
 		UpdatedAt:       group.UpdatedAt,
@@ -83,7 +84,13 @@ func (cfg *apiConfig) handlerGroupsCreate(w http.ResponseWriter, r *http.Request
 		RequestedTourID: group.RequestedTourID,
 		RequestedDate:   group.RequestedDate,
 		BookingID:       group.BookingID,
-	})
+	}
+
+	if err := pubsub.Publish("group_created", payload); err != nil {
+		log.Printf("could not publish message: %v", err)
+	}
+
+	respondWithJSON(w, http.StatusCreated, payload)
 
 	log.Printf("group %v created\n", group.Email)
 }

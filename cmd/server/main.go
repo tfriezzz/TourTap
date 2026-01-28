@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/tfriezzz/tourtap/internal/database"
+	"github.com/tfriezzz/tourtap/internal/pubsub"
 )
 
 type apiConfig struct {
@@ -36,6 +39,28 @@ func main() {
 		db:   dbQueries,
 	}
 
+	if err := pubsub.Init(); err != nil {
+		fmt.Println("nope")
+		log.Fatal(err)
+	}
+	defer pubsub.Close()
+
+	pubsub.Start(func(event pubsub.Event) {
+		switch event.Type {
+		case "group_created":
+			payload := Group{}
+			if err := json.Unmarshal(event.Data, &payload); err != nil {
+				log.Printf("could not unmarshal payload: %v", err)
+			}
+
+			log.Printf("New tour request: %v pax for tour %v on %v", payload.Pax, payload.RequestedTourID, payload.RequestedDate)
+		case "group_accepted":
+			// TODO:
+		case "group_declined":
+			// TODO:
+		}
+	})
+
 	mux := http.NewServeMux()
 
 	mux.Handle("/api/health", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerReadiness)))
@@ -54,5 +79,7 @@ func main() {
 	}
 
 	log.Printf("serving on: http://localhost:%s/\n", port)
-	log.Fatal(srv.ListenAndServe())
+	if err := srv.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
 }

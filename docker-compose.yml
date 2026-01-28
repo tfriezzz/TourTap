@@ -1,11 +1,16 @@
 services:
-  app:
-    build: .
+  rabbitmq:
+    image: rabbitmq:3.13-management
     ports:
-      - "8080:8080"
-    depends_on:
-      - db
-      - rabbitmq
+      - "5672:5672"
+      - "15672:15672"
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   db:
     image: postgres:15-alpine
@@ -17,12 +22,22 @@ services:
       - "5431:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tt_user -d tourtap_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-  rabbitmq:
-    image: rabbitmq:3.13-management
+  app:
+    build: .
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "8080:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_data:
