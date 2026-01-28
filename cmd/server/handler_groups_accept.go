@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/tfriezzz/tourtap/internal/pubsub"
 )
 
 func (cfg *apiConfig) handlerGroupsAccept(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +22,7 @@ func (cfg *apiConfig) handlerGroupsAccept(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, Group{
+	payload := Group{
 		ID:              group.ID,
 		CreatedAt:       group.CreatedAt,
 		UpdatedAt:       group.UpdatedAt,
@@ -32,7 +33,13 @@ func (cfg *apiConfig) handlerGroupsAccept(w http.ResponseWriter, r *http.Request
 		RequestedTourID: group.RequestedTourID,
 		RequestedDate:   group.RequestedDate,
 		BookingID:       group.BookingID,
-	})
+	}
 
-	log.Printf("tour accepted, sending email with payment details to: %s\n", group.Email)
+	if err := pubsub.Publish("group_accepted", payload); err != nil {
+		log.Printf("could not publish group_accepted: %v", err)
+	}
+
+	respondWithJSON(w, http.StatusOK, payload)
+
+	// log.Printf("tour accepted, sending email with payment details to: %s\n", group.Email)
 }

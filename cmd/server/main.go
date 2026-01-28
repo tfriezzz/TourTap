@@ -52,10 +52,16 @@ func main() {
 			if err := json.Unmarshal(event.Data, &payload); err != nil {
 				log.Printf("could not unmarshal payload: %v", err)
 			}
+			log.Printf("New group request: %v pax for tour %v on %v", payload.Pax, payload.RequestedTourID, payload.RequestedDate)
 
-			log.Printf("New tour request: %v pax for tour %v on %v", payload.Pax, payload.RequestedTourID, payload.RequestedDate)
 		case "group_accepted":
-			// TODO:
+			payload := Group{}
+			if err := json.Unmarshal(event.Data, &payload); err != nil {
+				log.Printf("could not unmarshal payload")
+			}
+			log.Printf("Group %v for tour %v on %v accepted", payload.Email, payload.RequestedTourID, payload.RequestedDate)
+			log.Println("*sending payment information*")
+
 		case "group_declined":
 			// TODO:
 		}

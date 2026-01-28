@@ -87,7 +87,7 @@ func (cfg *apiConfig) handlerGroupsCreate(w http.ResponseWriter, r *http.Request
 	}
 
 	if err := pubsub.Publish("group_created", payload); err != nil {
-		log.Printf("could not publish message: %v", err)
+		log.Printf("could not publish group_created: %v", err)
 	}
 
 	respondWithJSON(w, http.StatusCreated, payload)
