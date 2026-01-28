@@ -8,22 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/tfriezzz/tourtap/internal/database"
 )
-
-type Group struct {
-	ID              uuid.UUID            `json:"id"`
-	CreatedAt       time.Time            `json:"created_at"`
-	UpdatedAt       time.Time            `json:"updated_at"`
-	Email           string               `json:"email"`
-	Name            string               `json:"name"`
-	Pax             int32                `json:"pax"`
-	Status          database.GroupStatus `json:"customer_status"`
-	RequestedTourID int32                `json:"requested_tour_id"`
-	RequestedDate   time.Time            `json:"requested_date"`
-	BookingID       int32                `json:"booking_id"`
-}
 
 func (cfg *apiConfig) handlerGroupsCreate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {

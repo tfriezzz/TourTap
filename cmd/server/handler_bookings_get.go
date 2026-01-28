@@ -2,17 +2,7 @@ package main
 
 import (
 	"net/http"
-	"time"
 )
-
-type BookingsRow struct {
-	BookingID       int32       `json:"booking_id"`
-	TourName        string      `json:"tour_name"`
-	Date            time.Time   `json:"date"`
-	GroupCount      int64       `json:"group_count"`
-	TotalPax        interface{} `json:"total_pax"`
-	AttendingGroups interface{} `json:"attending_groups"`
-}
 
 func (cfg *apiConfig) handlerBookingsGet(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println("hi from handler")

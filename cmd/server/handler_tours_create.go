@@ -3,18 +3,9 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/tfriezzz/tourtap/internal/database"
 )
-
-type Tour struct {
-	ID        int32     `json:"id"`
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	BasePrice string    `json:"base_price"`
-}
 
 func (cfg *apiConfig) handlerToursCreate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
