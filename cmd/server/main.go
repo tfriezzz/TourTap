@@ -63,7 +63,13 @@ func main() {
 			log.Println("*sending payment information*")
 
 		case "group_declined":
-			// TODO:
+			payload := Group{}
+			if err := json.Unmarshal(event.Data, &payload); err != nil {
+				log.Printf("could not unmarshal payload")
+			}
+			log.Printf("Group %v for tour %v on %v declined", payload.Email, payload.RequestedTourID, payload.RequestedDate)
+			log.Println("*Sending decline mail*")
+
 		}
 	})
 
