@@ -52,7 +52,7 @@ func main() {
 			if err := json.Unmarshal(event.Data, &payload); err != nil {
 				log.Printf("could not unmarshal payload: %v", err)
 			}
-			log.Printf("New group request: %v pax for tour %v on %v", payload.Pax, payload.RequestedTourID, payload.RequestedDate)
+			log.Printf("New group request: %v pax for tour %v on %v pending", payload.Pax, payload.RequestedTourID, payload.RequestedDate)
 
 		case "group_accepted":
 			payload := Group{}
@@ -70,12 +70,20 @@ func main() {
 			log.Printf("Group %v for tour %v on %v declined", payload.Email, payload.RequestedTourID, payload.RequestedDate)
 			log.Println("*Sending decline mail*")
 
+		case "group_confirmed":
+			payload := Group{}
+			if err := json.Unmarshal(event.Data, &payload); err != nil {
+				log.Printf("could not unmarshal payload")
+			}
+			log.Printf("Group %v for tour %v on %v confirmed", payload.Email, payload.RequestedTourID, payload.RequestedDate)
+			log.Printf("*sending reciept*")
+
 		}
 	})
 
 	mux := http.NewServeMux()
 
-	mux.Handle("/api/health", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerReadiness)))
+	mux.Handle("GET /api/health", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerReadiness)))
 	mux.Handle("POST /api/groups/create", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsCreate)))
 	mux.Handle("POST /admin/tours/create", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerToursCreate)))
 	mux.Handle("GET /api/bookings", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGet)))
@@ -84,6 +92,7 @@ func main() {
 	mux.Handle("GET /api/pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerPending)))
 	mux.Handle("PUT /api/groups/{groupID}/accept", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsAccept)))
 	mux.Handle("PUT /api/groups/{groupID}/decline", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsDecline)))
+	mux.Handle("POST /webhook/payment", http.HandlerFunc(apiCfg.handlerPaymentWebhook))
 
 	srv := &http.Server{
 		Addr:    ":" + port,

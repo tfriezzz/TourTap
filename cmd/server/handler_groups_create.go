@@ -92,5 +92,5 @@ func (cfg *apiConfig) handlerGroupsCreate(w http.ResponseWriter, r *http.Request
 
 	respondWithJSON(w, http.StatusCreated, payload)
 
-	log.Printf("group %v created\n", group.Email)
+	// log.Printf("group %v created\n", group.Email)
 }

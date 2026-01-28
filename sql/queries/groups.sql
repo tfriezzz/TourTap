@@ -25,12 +25,21 @@ WHERE email = $1;
 
 -- name: GroupStatusAccepted :one
 UPDATE groups
-SET status = 'accepted'
+SET status = 'accepted',
+    updated_at = NOW()
 WHERE id = $1 AND status = 'pending'
 RETURNING *;
 
 -- name: GroupStatusDeclined :one
 UPDATE groups
-SET status = 'declined'
+SET status = 'declined',
+    updated_at = NOW()
 WHERE id = $1 AND status = 'pending'
+RETURNING *;
+
+-- name: GroupStatusConfirmed :one
+UPDATE groups
+SET status = 'confirmed',
+    updated_at = NOW()
+WHERE id = $1 AND status = 'accepted'
 RETURNING *;

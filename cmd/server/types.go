@@ -36,3 +36,10 @@ type BookingsRow struct {
 	TotalPax        interface{} `json:"total_pax"`
 	AttendingGroups interface{} `json:"attending_groups"`
 }
+
+type PaymentWebhookPayload struct {
+	Event       int32       `json:"group_id"`
+	PaymentData PaymentData `json:"status"`
+}
+
+type PaymentData struct{}
