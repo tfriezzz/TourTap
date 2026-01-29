@@ -1,0 +1,52 @@
+{{define "title"}}Request a Tour{{end}}
+
+{{define "content"}}
+<h1 class="mb-4">Request a Tour</h1>
+
+{{if .Message}}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{.Message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{{end}}
+{{if .Error}}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{.Error}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{{end}}
+
+<form method="POST" action="/api/groups/create" class="bg-white p-4 rounded shadow">
+    <div class="mb-3">
+        <label for="requested_tour_id" class="form-label">Select Tour</label>
+        <select name="requested_tour_id" id="requested_tour_id" class="form-select" required>
+            <option value="">Choose a tour...</option>
+            {{range .Tours}}
+                <option value="{{.ID}}">{{.Name}} - {{.Date.Format "2006-01-02"}}</option>
+            {{end}}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Your Name</label>
+        <input type="text" name="name" id="name" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" name="email" id="email" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="pax" class="form-label">Number of People (Pax)</label>
+        <input type="number" name="pax" id="pax" class="form-control" min="1" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="requested_date" class="form-label">Preferred Date</label>
+        <input type="date" name="requested_date" id="requested_date" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Request</button>
+</form>
+{{end}}
