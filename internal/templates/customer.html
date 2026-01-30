@@ -16,13 +16,13 @@
     </div>
 {{end}}
 
-<form method="POST" action="/api/groups/create" class="bg-white p-4 rounded shadow">
+<form id="tourRequestForm" method="POST" action="/api/groups/create" class="bg-white p-4 rounded shadow">
     <div class="mb-3">
         <label for="requested_tour_id" class="form-label">Select Tour</label>
         <select name="requested_tour_id" id="requested_tour_id" class="form-select" required>
             <option value="">Choose a tour...</option>
             {{range .Tours}}
-                <option value="{{.ID}}">{{.Name}} - {{.Date.Format "2006-01-02"}}</option>
+                <option value="{{.ID}}">{{.Name}}</option>
             {{end}}
         </select>
     </div>
@@ -49,4 +49,68 @@
 
     <button type="submit" class="btn btn-primary">Submit Request</button>
 </form>
+
+<div id="jsonOutput" class="mt-4 bg-dark text-light p-3 rounded" style="display: none;">
+    <h5>Form Data as JSON:</h5>
+    <pre id="jsonContent" class="mb-0"></pre>
+</div>
+{{end}}
+
+{{define "scripts"}}
+<script>
+$(document).ready(function() {
+    // Function to convert form data to JSON
+    function formToJSON(formSelector) {
+        const form = $(formSelector);
+        const formData = form.serializeArray();
+        const jsonObject = {};
+        
+        $.each(formData, function() {
+            if (jsonObject[this.name]) {
+                if (!Array.isArray(jsonObject[this.name])) {
+                    jsonObject[this.name] = [jsonObject[this.name]];
+                }
+                jsonObject[this.name].push(this.value || '');
+            } else {
+                jsonObject[this.name] = this.value || '';
+            }
+        });
+        
+        return jsonObject;
+    }
+    
+    // Display JSON when form fields change
+    $('#tourRequestForm input, #tourRequestForm select').on('change input', function() {
+        const jsonData = formToJSON('#tourRequestForm');
+        const jsonString = JSON.stringify(jsonData, null, 2);
+        
+        $('#jsonContent').text(jsonString);
+        $('#jsonOutput').show();
+    });
+    
+    // Handle form submission (optional - for AJAX submission)
+    $('#tourRequestForm').on('submit', function(e) {
+        // Uncomment the line below to prevent normal form submission
+        // e.preventDefault();
+        
+        const jsonData = formToJSON('#tourRequestForm');
+        console.log('Form Data as JSON:', jsonData);
+        
+        $.ajax({
+            type: 'POST',
+            url: '/api/groups/create',
+            contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            success: function(response) {
+                alert('Success: ' + response.message);
+                $('#tourRequestForm')[0].reset();
+                $('#jsonOutput').hide();
+            },
+            error: function(xhr) {
+                alert('Error: ' + xhr.responseText);
+            }
+        });
+    });
+});
+</script>
 {{end}}

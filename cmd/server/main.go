@@ -39,6 +39,10 @@ func main() {
 		db:   dbQueries,
 	}
 
+	// if err := templates.Load(); err != nil {
+	// 	log.Fatal(err)
+	// }
+
 	if err := pubsub.Init(); err != nil {
 		fmt.Println("nope")
 		log.Fatal(err)
@@ -92,7 +96,8 @@ func main() {
 	mux.Handle("GET /api/pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerPending)))
 	mux.Handle("PUT /api/groups/{groupID}/accept", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsAccept)))
 	mux.Handle("PUT /api/groups/{groupID}/decline", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsDecline)))
-	mux.Handle("POST /webhook/payment", http.HandlerFunc(apiCfg.handlerPaymentWebhook))
+	mux.Handle("POST /webhooks/payment", http.HandlerFunc(apiCfg.handlerPaymentWebhook))
+	// mux.HandleFunc("/", apiCfg.handlerCustomer)
 
 	srv := &http.Server{
 		Addr:    ":" + port,

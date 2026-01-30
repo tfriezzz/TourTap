@@ -90,6 +90,8 @@ func (cfg *apiConfig) handlerGroupsCreate(w http.ResponseWriter, r *http.Request
 		log.Printf("could not publish group_created: %v", err)
 	}
 
+	// http.Redirect(w, r, "/?message=Request%20recieved!%20We'll%20review%20it%20asap.", http.StatusSeeOther)
+
 	respondWithJSON(w, http.StatusCreated, payload)
 
 	// log.Printf("group %v created\n", group.Email)
