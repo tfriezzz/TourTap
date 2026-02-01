@@ -4,7 +4,7 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    hashed_password TEXT DEFAULT 'unset' NOT NULL;
+    hashed_password TEXT DEFAULT 'unset' NOT NULL
 );
 
 
