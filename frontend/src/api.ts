@@ -6,7 +6,7 @@ interface Tour {
   name: string
   created_at: string
   updated_at: string
-  base_price: string
+  base_price: number
 }
 
 interface GroupRequestPayload {
