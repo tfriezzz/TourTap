@@ -15,18 +15,24 @@ import (
 )
 
 type apiConfig struct {
-	db   *database.Queries
-	port string
+	db        *database.Queries
+	jwtSecret string
 }
 
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("cannot load .env file")
 	}
-	port := os.Getenv("TOURTAP_PORT")
+	const jwtSecret = os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable not set")
+	}
+	// TODO: add jwtSecret to .env
+	const port = os.Getenv("TOURTAP_PORT")
 	if port == "" {
 		log.Fatal("PORT environment variable is not set")
 	}
+
 	dbURL := os.Getenv("POSTGRES_URL")
 	db, err := sql.Open("postgres", dbURL)
 	dbQueries := database.New(db)
@@ -35,8 +41,8 @@ func main() {
 	}
 
 	apiCfg := apiConfig{
-		port: port,
-		db:   dbQueries,
+		db:        dbQueries,
+		jwtSecret: jwtSecret,
 	}
 
 	// if err := templates.Load(); err != nil {
@@ -97,7 +103,12 @@ func main() {
 	mux.Handle("PUT /api/groups/{groupID}/accept", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsAccept)))
 	mux.Handle("PUT /api/groups/{groupID}/decline", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsDecline)))
 	mux.Handle("POST /webhooks/payment", http.HandlerFunc(apiCfg.handlerPaymentWebhook))
-	// mux.HandleFunc("/", apiCfg.handlerCustomer)
+
+	mux.Handle("POST /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerUsersCreate)))
+	mux.Handle("PUT /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerUpdateCredentials)))
+	mux.Handle("POST /api/login", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerLogin)))
+	mux.Handle("POST /api/refresh", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRefresh)))
+	mux.Handle("POST /api/revoke", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRevoke)))
 
 	srv := &http.Server{
 		Addr:    ":" + port,
