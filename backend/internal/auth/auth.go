@@ -4,6 +4,7 @@ package auth
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -12,8 +13,15 @@ import (
 	"github.com/alexedwards/argon2id"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/tfriezzz/tourtap/internal/database"
 )
+
+type TokenType string
+
+const (
+	TokenTypeAccess TokenType = "tourtap-access"
+)
+
+var ErrNoAuthHeaderIncluded = errors.New("no auth header included in request")
 
 func HashPassword(password string) (string, error) {
 	params := argon2id.DefaultParams
@@ -36,13 +44,13 @@ func CheckPasswordHash(password, hash string) (bool, error) {
 func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (string, error) {
 	now := jwt.NewNumericDate(time.Now().UTC())
 	expiration := jwt.NewNumericDate(now.Add(expiresIn))
-	jwtID := uuid.New().String()
+	// jwtID := uuid.New().String()
 	claims := jwt.RegisteredClaims{
-		Issuer:    "chirpy",
+		Issuer:    string(TokenTypeAccess),
 		IssuedAt:  now,
 		ExpiresAt: expiration,
 		Subject:   userID.String(),
-		ID:        jwtID,
+		// ID:        jwtID,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signed, err := token.SignedString([]byte(tokenSecret))
@@ -88,13 +96,16 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 }
 
 func GetBearerToken(headers http.Header) (string, error) {
-	header := headers["Authorization"]
-	for _, headerString := range header {
-		splitString := strings.Split(headerString, " ")
-		tokenString := strings.TrimSpace(splitString[1])
-		return tokenString, nil
+	authHeader := headers.Get("Authorization")
+	if authHeader == "" {
+		return "", ErrNoAuthHeaderIncluded
 	}
-	return "", fmt.Errorf("missing string")
+	splitAuth := strings.Split(authHeader, " ")
+	if len(splitAuth) < 2 || splitAuth[0] != "Bearer" {
+		return "", errors.New("malformed authorization header")
+	}
+
+	return splitAuth[1], nil
 }
 
 func MakeRefreshToken() string {
@@ -110,7 +121,7 @@ func GetAPIKey(headers http.Header) (string, error) {
 		apiString := strings.TrimSpace(splitString[1])
 		return apiString, nil
 	}
-	return "", fmt.Errorf("missing string")
+	return "", ErrNoAuthHeaderIncluded
 }
 
 // func RJWTokenMaker(JWTString string, user database.User) (string, string, error) {
@@ -119,36 +130,36 @@ func GetAPIKey(headers http.Header) (string, error) {
 // 		return "", "", err
 // 	}
 
-	refreshToken, err := MakeRefreshToken()
-	if err != nil {
-		return "", "", err
-	}
-	return JWTtoken, refreshToken, nil
-}
+// 	refreshToken, err := MakeRefreshToken()
+// 	if err != nil {
+// 		return "", "", err
+// 	}
+// 	return JWTtoken, refreshToken, nil
+// }
 
-func RefreshTokenToDatabase(cfg *apiConfig, r *http.Request, refreshToken string, user uuid.UUID) error {
-	returnTokenParams := database.CreateRefreshTokenParams{
-		Token:     refreshToken,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		UserID:    user,
-		ExpiresAt: time.Now().Add(24 * time.Hour),
-	}
-	_, err := cfg.DB.CreateRefreshToken(r.Context(), returnTokenParams)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// func RefreshTokenToDatabase(cfg *apiConfig, r *http.Request, refreshToken string, user uuid.UUID) error {
+// 	returnTokenParams := database.CreateRefreshTokenParams{
+// 		Token:     refreshToken,
+// 		CreatedAt: time.Now(),
+// 		UpdatedAt: time.Now(),
+// 		UserID:    user,
+// 		ExpiresAt: time.Now().Add(24 * time.Hour),
+// 	}
+// 	_, err := cfg.DB.CreateRefreshToken(r.Context(), returnTokenParams)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
-func DBUserToUserResponse(u database.User, cfg *apiConfig, JWTtoken string, refreshToken string) userResponse {
-	return userResponse{
-		ID:           u.ID,
-		CreatedAt:    u.CreatedAt,
-		UpdatedAt:    u.CreatedAt,
-		Email:        u.Email,
-		Token:        JWTtoken,
-		RefreshToken: refreshToken,
-		IsChirpyRed:  u.IsChirpyRed,
-	}
-}
+// func DBUserToUserResponse(u database.User, cfg *apiConfig, JWTtoken string, refreshToken string) userResponse {
+// 	return userResponse{
+// 		ID:           u.ID,
+// 		CreatedAt:    u.CreatedAt,
+// 		UpdatedAt:    u.CreatedAt,
+// 		Email:        u.Email,
+// 		Token:        JWTtoken,
+// 		RefreshToken: refreshToken,
+// 		IsChirpyRed:  u.IsChirpyRed,
+// 	}
+// }
