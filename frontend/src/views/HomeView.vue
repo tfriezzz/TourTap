@@ -5,6 +5,6 @@ import LoginUser from '../components/LoginUser.vue'
 <template>
   <main>
     <h1 class="green">Welcome to TourControl!</h1>
-    <LoginUser></LoginUser>
+    <p>Page under construction</p>
   </main>
 </template>
