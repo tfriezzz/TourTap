@@ -23,12 +23,12 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("cannot load .env file")
 	}
-	const jwtSecret = os.Getenv("JWT_SECRET")
+	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
 		log.Fatal("JWT_SECRET environment variable not set")
 	}
 	// TODO: add jwtSecret to .env
-	const port = os.Getenv("TOURTAP_PORT")
+	port := os.Getenv("TOURTAP_PORT")
 	if port == "" {
 		log.Fatal("PORT environment variable is not set")
 	}
@@ -94,12 +94,15 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.Handle("GET /api/health", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerReadiness)))
-	mux.Handle("POST /api/groups/create", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsCreate)))
-	mux.Handle("POST /admin/tours/create", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerToursCreate)))
-	mux.Handle("GET /api/bookings", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGet)))
-	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupsReset)))
+
 	mux.Handle("GET /api/tours", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerToursGet)))
-	mux.Handle("GET /api/pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerPending)))
+	mux.Handle("POST /admin/tours/create", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerToursCreate)))
+
+	mux.Handle("GET /api/bookings", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGet)))
+
+	// mux.Handle("GET /api/pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerPending)))
+
+	mux.Handle("POST /api/groups/create", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsCreate)))
 	mux.Handle("PUT /api/groups/{groupID}/accept", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsAccept)))
 	mux.Handle("PUT /api/groups/{groupID}/decline", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsDecline)))
 	mux.Handle("POST /webhooks/payment", http.HandlerFunc(apiCfg.handlerPaymentWebhook))
@@ -109,6 +112,8 @@ func main() {
 	mux.Handle("POST /api/login", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerLogin)))
 	mux.Handle("POST /api/refresh", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRefresh)))
 	mux.Handle("POST /api/revoke", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRevoke)))
+
+	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupsReset)))
 
 	srv := &http.Server{
 		Addr:    ":" + port,

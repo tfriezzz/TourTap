@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/tfriezzz/tourtap/internal/auth"
@@ -11,35 +9,53 @@ import (
 )
 
 func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	params := User{}
-	if err := decoder.Decode(&params); err != nil {
-		fmt.Print(err)
+	type parameters struct {
+		Password string `json:"password"`
+		Email    string `json:"email"`
 	}
+	type response struct {
+		User
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	params := parameters{}
+	if err := decoder.Decode(&params); err != nil {
+		respondWithError(w, http.StatusInternalServerError, "could not decode parameters", err)
+		return
+	}
+
 	hashedPassword, err := auth.HashPassword(params.Password)
 	if err != nil {
-		log.Print(err)
+		respondWithError(w, http.StatusInternalServerError, "could not hash password", err)
+		return
 	}
-	userParams := database.CreateUserParams{
-		Email: params.Email, HashedPassword: hashedPassword,
-	}
-	user, err := cfg.db.CreateUser(r.Context(), userParams)
+
+	user, err := cfg.db.CreateUser(r.Context(), database.CreateUserParams{
+		HashedPassword: hashedPassword,
+		Email:          params.Email,
+	})
 	if err != nil {
-		fmt.Printf("CreateUser call: %v\n", err)
+		respondWithError(w, http.StatusInternalServerError, "could not create user", err)
+		return
 	}
 
-	JWTtoken, refreshToken, err := auth.RJWTokenMaker(cfg, user)
-	if err != nil {
-		log.Printf("RJWTokenMaker returned err: %v", err)
-	}
+	// JWTtoken, err := auth.MakeJWT(user.ID, cfg.jwtSecret, time.Hour)
+	// if err != nil {
+	// 	log.Printf("RJWTokenMaker returned err: %v", err)
+	// }
 
-	if err := auth.RefreshTokenToDatabase(cfg, r, refreshToken, user.ID); err != nil {
-		log.Printf("refreshTokenToDatabase returned err: %v", err)
-	}
+	// if err := auth.RefreshTokenToDatabase(cfg, r, refreshToken, user.ID); err != nil {
+	// 	log.Printf("refreshTokenToDatabase returned err: %v", err)
+	// }
 
-	userResponse := auth.DBUserToUserResponse(user, cfg, JWTtoken, refreshToken)
+	// userResponse := auth.DBUserToUserResponse(user, cfg, JWTtoken, refreshToken)
 
-	if err := respondWithJSON(w, 201, userResponse); err != nil {
-		fmt.Print(err)
-	}
+	respondWithJSON(w, http.StatusCreated, response{
+		User: User{
+			ID:        user.ID,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+			Email:     user.Email,
+		},
+	})
 }

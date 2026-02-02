@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/tfriezzz/tourtap/internal/auth"
+	"github.com/tfriezzz/tourtap/internal/database"
 )
 
 func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +40,7 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accessToken, err := auth.MakeJWT(
+	JWTToken, err := auth.MakeJWT(
 		user.ID,
 		cfg.jwtSecret,
 		time.Hour,
@@ -51,22 +52,23 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	refreshToken := auth.MakeRefreshToken()
 
-	_, err := cfg.db.CreateRefreshToken(r.Context(), database.CreateRefreshTokenParams{
+	if _, err := cfg.db.CreateRefreshToken(r.Context(), database.CreateRefreshTokenParams{
 		UserID:    user.ID,
 		Token:     refreshToken,
 		ExpiresAt: time.Now().UTC().Add(time.Hour * 24 * 60),
-	})
-	if err != nil {
+	}); err != nil {
 		respondWithError(w, http.StatusInternalServerError, "could not save refresh token", err)
 		return
 	}
 
 	respondWithJSON(w, http.StatusOK, response{
 		User: User{
-			ID: user.ID,
-			C
+			ID:        user.ID,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+			Email:     user.Email,
 		},
-		Token:        accessToken,
+		Token:        JWTToken,
 		RefreshToken: refreshToken,
 	})
 }

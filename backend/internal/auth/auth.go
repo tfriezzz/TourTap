@@ -53,15 +53,15 @@ func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (str
 }
 
 func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
-	claims := &jwt.RegisteredClaims{}
+	claims := jwt.RegisteredClaims{}
 
-	keyFunc := func(*jwt.Token) (interface{}, error) {
+	keyFunc := func(*jwt.Token) (any, error) {
 		returnToken := []byte(tokenSecret)
 
 		return returnToken, nil
 	}
 
-	token, err := jwt.ParseWithClaims(tokenString, claims, keyFunc)
+	token, err := jwt.ParseWithClaims(tokenString, &claims, keyFunc)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
@@ -71,9 +71,17 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 		return uuid.UUID{}, err
 	}
 
+	issuer, err := token.Claims.GetIssuer()
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if issuer != string(TokenTypeAccess) {
+		return uuid.Nil, errors.New("invalid user")
+	}
+
 	id, err := uuid.Parse(strID)
 	if err != nil {
-		return uuid.UUID{}, err
+		return uuid.UUID{}, fmt.Errorf("invalid user ID: %w", err)
 	}
 
 	return id, nil
@@ -89,15 +97,10 @@ func GetBearerToken(headers http.Header) (string, error) {
 	return "", fmt.Errorf("missing string")
 }
 
-func MakeRefreshToken() (string, error) {
-	key := make([]byte, 32)
-	_, err := rand.Read(key)
-	if err != nil {
-		return "", err
-	}
-	hexString := hex.EncodeToString(key)
-
-	return hexString, nil
+func MakeRefreshToken() string {
+	token := make([]byte, 32)
+	rand.Read(token)
+	return hex.EncodeToString(token)
 }
 
 func GetAPIKey(headers http.Header) (string, error) {
@@ -110,11 +113,11 @@ func GetAPIKey(headers http.Header) (string, error) {
 	return "", fmt.Errorf("missing string")
 }
 
-func RJWTokenMaker(JWTString string, user database.User) (string, string, error) {
-	JWTtoken, err := MakeJWT(user.ID, JWTString, time.Hour)
-	if err != nil {
-		return "", "", err
-	}
+// func RJWTokenMaker(JWTString string, user database.User) (string, string, error) {
+// 	JWTtoken, err := MakeJWT(user.ID, JWTString, time.Hour)
+// 	if err != nil {
+// 		return "", "", err
+// 	}
 
 	refreshToken, err := MakeRefreshToken()
 	if err != nil {
