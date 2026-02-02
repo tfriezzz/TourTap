@@ -10,21 +10,22 @@ import (
 )
 
 func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println("hi from login")
 	type parameters struct {
 		Password string `json:"password"`
 		Email    string `json:"email"`
 	}
 	type response struct {
-		User
+		User         User   `json:"user"`
 		Token        string `json:"token"`
-		RefreshToken string `json:"token"`
+		RefreshToken string `json:"refres_token"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "couldn not decode parameters", err)
+		respondWithError(w, http.StatusInternalServerError, "could not decode parameters", err)
 		return
 	}
 
@@ -60,6 +61,9 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, "could not save refresh token", err)
 		return
 	}
+
+	// fmt.Printf("params: %v\n", params)
+	// fmt.Printf("user: %v, token: %v\n", user.Email, JWTToken)
 
 	respondWithJSON(w, http.StatusOK, response{
 		User: User{
