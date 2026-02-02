@@ -108,7 +108,7 @@ func main() {
 	mux.Handle("POST /webhooks/payment", http.HandlerFunc(apiCfg.handlerPaymentWebhook))
 
 	mux.Handle("POST /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerUsersCreate)))
-	mux.Handle("PUT /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerUpdateCredentials)))
+	mux.Handle("PUT /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerUsersUpdate)))
 	mux.Handle("POST /api/login", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerLogin)))
 	mux.Handle("POST /api/refresh", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRefresh)))
 	mux.Handle("POST /api/revoke", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRevoke)))
