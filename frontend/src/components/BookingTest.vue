@@ -86,7 +86,7 @@ const onSubmit = async (event: FormSubmitEvent) => {
       No tours available yet. Check back soon!
     </Message>
 
-    <Form v-else v-slot="$form" :resolver="zodResolver(schema)" @submit="onSubmit">
+    <Form v-else v-slot="$form" :resolver="zodResolver(schema)" @submit="onSubmit" class="flex flex-column row-gap-4">
 
       <div class="form-group">
         <label>Which tour?</label>
