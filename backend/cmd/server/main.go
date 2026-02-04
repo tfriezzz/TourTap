@@ -111,7 +111,8 @@ func main() {
 	mux.Handle("GET /api/tours", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerToursGet)))
 	mux.Handle("POST /admin/tours/create", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerToursCreate)))
 
-	mux.Handle("GET /api/bookings", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGet)))
+	mux.Handle("GET /api/bookings/tour-date", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGet)))
+	mux.Handle("GET /api/bookings/all-date", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGetAllDate)))
 
 	// mux.Handle("GET /api/pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerPending)))
 
@@ -127,6 +128,7 @@ func main() {
 	mux.Handle("POST /api/revoke", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRevoke)))
 
 	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupsReset)))
+	mux.Handle("POST /api/test", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerFrontend)))
 
 	handler := corsMiddleware(mux)
 	srv := &http.Server{

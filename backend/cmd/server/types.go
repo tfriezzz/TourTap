@@ -37,12 +37,12 @@ type Group struct {
 }
 
 type BookingsRow struct {
-	BookingID       int32       `json:"booking_id"`
-	TourName        string      `json:"tour_name"`
-	Date            time.Time   `json:"date"`
-	GroupCount      int64       `json:"group_count"`
-	TotalPax        interface{} `json:"total_pax"`
-	AttendingGroups interface{} `json:"attending_groups"`
+	BookingID       int32     `json:"booking_id"`
+	TourName        string    `json:"tour_name"`
+	Date            time.Time `json:"date"`
+	GroupCount      int64     `json:"group_count"`
+	TotalPax        any       `json:"total_pax"`
+	AttendingGroups any       `json:"attending_groups"`
 }
 
 type PaymentWebhookPayload struct {

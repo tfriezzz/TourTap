@@ -39,6 +39,61 @@ func (q *Queries) CreateBooking(ctx context.Context, arg CreateBookingParams) (B
 	return i, err
 }
 
+const getAllBookingsOnDate = `-- name: GetAllBookingsOnDate :many
+SELECT
+  b.id AS booking_id,
+  t.name AS tour_name,
+  b.date,
+  COUNT(g.id) AS group_count,
+  COALESCE(SUM(g.pax), 0) AS total_pax,
+  COALESCE(STRING_AGG(g.email, ', '), '') AS attending_groups
+FROM bookings b
+JOIN tours t ON b.tour_id = t.id
+LEFT JOIN groups g ON g.booking_id = b.id
+WHERE date = $1
+GROUP BY b.id, t.name, b.date
+ORDER BY b.date DESC
+`
+
+type GetAllBookingsOnDateRow struct {
+	BookingID       int32
+	TourName        string
+	Date            time.Time
+	GroupCount      int64
+	TotalPax        interface{}
+	AttendingGroups interface{}
+}
+
+func (q *Queries) GetAllBookingsOnDate(ctx context.Context, date time.Time) ([]GetAllBookingsOnDateRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllBookingsOnDate, date)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllBookingsOnDateRow
+	for rows.Next() {
+		var i GetAllBookingsOnDateRow
+		if err := rows.Scan(
+			&i.BookingID,
+			&i.TourName,
+			&i.Date,
+			&i.GroupCount,
+			&i.TotalPax,
+			&i.AttendingGroups,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getBookingByTourDate = `-- name: GetBookingByTourDate :one
 SELECT id, tour_id, created_at, updated_at, date FROM bookings
 WHERE date = $1 AND tour_id = $2
