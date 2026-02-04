@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BookingForm from '@/components/BookingForm.vue';
 import LoginUser from '@/components/LoginUser.vue';
 import UserInfo from '@/components/UserInfo.vue';
 import store from '@/store';
@@ -21,7 +22,7 @@ const onLogout = (user: User) => {
 
 <template>
   <main>
-    <h1 class="green">Tour Control</h1>
+    <h1 class="green">Login</h1>
     <UserInfo v-if="store.state.user" :user="store.state.user" @logout="onLogout" />
     <LoginUser v-else />
   </main>
