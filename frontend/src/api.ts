@@ -2,6 +2,17 @@ import axios from 'axios';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
+export interface Group {
+  id: string;
+  email: string;
+  name: string;
+  pax: number;
+  customer_status: 'pending' | 'confirmed' | 'cancelled' | string;
+  requested_tour_id: number;
+  requested_date: string;
+  booking_id: number;
+}
+
 export interface Tour {
   id: number;
   name: string;
@@ -25,6 +36,16 @@ export const getAllTours = async (): Promise<Tour[]> => {
     throw error;
   }
 };
+
+export const getPendingGroups = async (): Promise<Group[]> => {
+  try {
+    const response = await axios.get('/api/groups/get-pending');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 export const getAllBookingsByDate = async (date: string): Promise<Booking[]> => {
   try {

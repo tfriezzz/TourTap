@@ -1,7 +1,6 @@
 import { reactive } from "vue"
 import type { AuthState } from "./types/auth_state"
 import { readonly } from "vue"
-import type User from 'types/user.ts'
 
 const state = reactive<AuthState>({
   user: null,
