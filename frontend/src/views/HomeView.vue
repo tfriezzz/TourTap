@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // import BookingForm from '@/components/BookingForm.vue';
 import BookingTest from '@/components/BookingTest.vue';
+import BookingToday from '@/components/dashboard/BookingToday.vue';
 // import LoginUser from '../components/LoginUser.vue'
 </script>
 
@@ -8,6 +9,6 @@ import BookingTest from '@/components/BookingTest.vue';
   <main>
     <h1 class="green">TourControl</h1>
     <p>Page under construction</p>
-    <BookingTest />
+    <BookingToday />
   </main>
 </template>

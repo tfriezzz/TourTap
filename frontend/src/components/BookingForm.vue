@@ -53,7 +53,7 @@ onMounted(async () => {
   }
 })
 
-const isSubmitDisabled = computed(() => !email.value)
+// const isSubmitDisabled = computed(() => !email.value)
 
 const errorMessage = ref<string>('')
 

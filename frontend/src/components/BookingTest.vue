@@ -90,7 +90,7 @@ const onSubmit = async (event: FormSubmitEvent) => {
 
       <div class="form-group">
         <label>Which tour?</label>
-        <Dropdown name="requested_tour_id" :options="tours" optionValue="id"
+        <Select name="requested_tour_id" :options="tours" optionValue="id"
           :optionLabel="(tour) => `${tour.name} – JPY ${tour.base_price}`" placeholder="Select a tour" fluid />
         <Message v-if="$form.requested_tour_id?.invalid" severity="error" size="small">
           {{ $form.requested_tour_id?.error?.message }}
