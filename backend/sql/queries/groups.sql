@@ -22,6 +22,10 @@ DELETE FROM groups;
 SELECT * FROM groups
 WHERE email = $1;
 
+-- name: GetGroupsPending :many
+SELECT * FROM groups
+WHERE status = 'pending';
+
 
 -- name: GroupStatusAccepted :one
 UPDATE groups

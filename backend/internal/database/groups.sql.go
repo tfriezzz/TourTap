@@ -94,6 +94,45 @@ func (q *Queries) GetGroupByEmail(ctx context.Context, email string) (Group, err
 	return i, err
 }
 
+const getGroupsPending = `-- name: GetGroupsPending :many
+SELECT id, created_at, updated_at, email, name, pax, status, requested_tour_id, requested_date, booking_id FROM groups
+WHERE status = 'pending'
+`
+
+func (q *Queries) GetGroupsPending(ctx context.Context) ([]Group, error) {
+	rows, err := q.db.QueryContext(ctx, getGroupsPending)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Group
+	for rows.Next() {
+		var i Group
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Email,
+			&i.Name,
+			&i.Pax,
+			&i.Status,
+			&i.RequestedTourID,
+			&i.RequestedDate,
+			&i.BookingID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const groupStatusAccepted = `-- name: GroupStatusAccepted :one
 UPDATE groups
 SET status = 'accepted',
