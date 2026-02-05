@@ -56,11 +56,12 @@ onMounted(() => {
 
 <template>
   <div class="card">
-    <div class="flex justify-content-around flex-wrap">
-      <p>Bookings for:</p>
+    <h2 class="flex justify-content-around flex-wrap">Bookings</h2>
+    <div class="flex justify-content-between flex-wrap">
+      <!-- <p>Bookings for:</p> -->
+      <Button label="Refresh" icon="pi pi-refresh" @click="fetchBookings" :loading="bookingsLoading" />
       <DatePicker v-model="selectedDate" dateFormat="dd-mm-yy" :showButtonBar="true" :showIcon="true"
         iconDisplay="input" class="w-48" />
-      <Button label="Refresh" icon="pi pi-refresh" @click="fetchBookings" :loading="bookingsLoading" />
     </div>
 
     <div v-if="bookingsLoading" class="flex justify-center items-center h-32">

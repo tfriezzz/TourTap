@@ -8,7 +8,6 @@ import BookingTest from '@/components/BookingTest.vue';
 
 <template>
   <main>
-    <h1>Booking Request</h1>
     <BookingTest />
   </main>
 </template>

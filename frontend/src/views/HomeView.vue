@@ -10,7 +10,7 @@ import PendingGroups from '@/components/dashboard/PendingGroups.vue';
   <main>
     <h1 class="green">TourControl</h1>
     <p>Page under construction</p>
-    <!-- <BookingToday /> -->
-    <PendingGroups />
+    <BookingToday />
+    <!-- <PendingGroups /> -->
   </main>
 </template>

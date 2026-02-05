@@ -90,7 +90,7 @@ const declineGroup = async (groupId: string, email: string) => {
 <template>
   <div class="card">
     <div>
-      <p>Pending tour requests:</p>
+      <h2 class="flex justify-content-around flex-wrap">Pending tour requests</h2>
     </div>
 
     <div v-if="groupsLoading" class="flex justify-center items-center h-32">
@@ -103,10 +103,24 @@ const declineGroup = async (groupId: string, email: string) => {
 
     <DataTable v-else :value="groups" tableStyle="min-width: 50rem" :paginator="groups.length > 10" :rows="10"
       responsiveLayout="scroll" stripedRows>
-      <Column field="requested_date" header="Date" sortable />
+      <Column field="requested_date" header="Requested date" sortable>
+        <template #body="slotProps">
+          {{ new Date(slotProps.data.requested_date).toLocaleDateString('en-GB', {
+            year: 'numeric', month: 'short', day: 'numeric'
+          }) }}
+        </template>
+      </Column>
       <Column field="name" header="Name" sortable />
+      <Column field="email" header="Email">
+        <template #body="{ data }">
+          <a :href="`mailto:${data.email}`" class="text-primary hover:underline">
+            {{ data.email }}
+          </a>
+        </template>
+      </Column>
       <Column field="pax" header="Pax" />
       <Column field="requested_tour_id" header="Tour ID" sortable />
+      <Column field="booking_id" header="Booking ID" sortable />
       <!-- <Column field="id" header="Group ID" /> -->
       <Column header="Actions">
         <template #body="slotProps">

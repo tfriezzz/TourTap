@@ -76,7 +76,8 @@ const onSubmit = async (event: FormSubmitEvent) => {
 
 <template>
   <div class="form-container">
-    <h3>Request Your Tour Spot!</h3>
+    <h1 class="flex justify-content-around flex-wrap">Booking request</h1>
+    <p class="flex justify-content-around flex-wrap">Request Your Tour Spot!</p>
 
     <div v-if="toursLoading">Loading available tours...</div>
     <Message v-else-if="toursError" severity="error">

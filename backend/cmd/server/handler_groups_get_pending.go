@@ -1,6 +1,8 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+)
 
 func (cfg *apiConfig) handlerGroupsGetPending(w http.ResponseWriter, r *http.Request) {
 	groups, err := cfg.db.GetGroupsPending(r.Context())
@@ -13,13 +15,16 @@ func (cfg *apiConfig) handlerGroupsGetPending(w http.ResponseWriter, r *http.Req
 
 	for i, group := range groups {
 		payload[i] = Group{
-			ID:        group.ID,
-			CreatedAt: group.CreatedAt,
-			UpdatedAt: group.UpdatedAt,
-			Email:     group.Email,
-			Name:      group.Name,
-			Pax:       group.Pax,
-			Status:    group.Status,
+			ID:              group.ID,
+			CreatedAt:       group.CreatedAt,
+			UpdatedAt:       group.UpdatedAt,
+			Email:           group.Email,
+			Name:            group.Name,
+			Pax:             group.Pax,
+			Status:          group.Status,
+			RequestedTourID: group.RequestedTourID,
+			RequestedDate:   group.RequestedDate,
+			BookingID:       group.BookingID,
 		}
 	}
 

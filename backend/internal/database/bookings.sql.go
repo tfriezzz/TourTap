@@ -50,7 +50,7 @@ SELECT
 FROM bookings b
 JOIN tours t ON b.tour_id = t.id
 LEFT JOIN groups g ON g.booking_id = b.id
-WHERE date = $1
+WHERE date = $1 AND NOT status = 'pending'
 GROUP BY b.id, t.name, b.date
 ORDER BY b.date DESC
 `
