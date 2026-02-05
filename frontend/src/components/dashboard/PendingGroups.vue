@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import { getPendingGroups } from '@/api'
+import { api, getPendingGroups } from '@/api'
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
 
@@ -41,7 +41,7 @@ onMounted(async () => {
 
 const acceptGroup = async (groupId: string, email: string) => {
   try {
-    await axios.put(`/api/groups/${groupId}/accept`);
+    await api.put(`/api/groups/${groupId}/accept`);
 
     toast.add({
       severity: 'success',

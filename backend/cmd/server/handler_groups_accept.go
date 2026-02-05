@@ -5,10 +5,21 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/tfriezzz/tourtap/internal/auth"
 	"github.com/tfriezzz/tourtap/internal/pubsub"
 )
 
 func (cfg *apiConfig) handlerGroupsAccept(w http.ResponseWriter, r *http.Request) {
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Couldn't find JWT", err)
+		return
+	}
+	if _, err := auth.ValidateJWT(token, cfg.jwtSecret); err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Couldn't validate JWT", err)
+		return
+	}
+
 	groupsIDString := r.PathValue("groupID")
 	groupID, err := uuid.Parse(groupsIDString)
 	if err != nil {

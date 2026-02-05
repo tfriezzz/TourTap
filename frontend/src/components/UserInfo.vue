@@ -28,7 +28,7 @@ const onLogout = () => emit('logout', props.user)
       <div class="flex flex-column row-gap-2">
         <div>
           <i class="pi pi-user"></i>
-          <span class="m-2"> {{ user.id }}</span>
+          <span class="m-2"> {{ user.name }}</span>
         </div>
 
 

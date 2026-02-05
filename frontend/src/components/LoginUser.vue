@@ -15,11 +15,11 @@ interface LoginResponse {
   access_token: string
   refresh_token: string
 }
-//TODO: add expiration time
 
-const username = ref<string>('')
+const name = ref<string>('')
+const email = ref<string>('')
 const password = ref<string>('')
-const isLoginDisabled = computed(() => !username.value || !password.value)
+const isLoginDisabled = computed(() => !email.value || !password.value)
 
 const errorMessage = ref<string>('')
 const toast = useToast()
@@ -27,14 +27,16 @@ const toast = useToast()
 const handleLogin = async () => {
   try {
     const response = await axios.post<LoginResponse>('/api/login', {
-      email: username.value,
-      password: password.value,
+      // name: name.value,
+      email: email.value,
+      password: password.value
     })
 
     store.setUser(response.data.user, response.data.access_token, response.data.refresh_token)
+
     toast.add({
       severity: 'success',
-      summary: `Hello, ${response.data.user.email}`,
+      summary: `Hello, ${response.data.user.name}`,
       detail: 'Login successful',
       life: 3000,
     })
@@ -63,8 +65,8 @@ const handleLogin = async () => {
         <i class="pi pi-user"></i>
       </InputGroupAddon>
       <FloatLabel>
-        <InputText id="username" v-model="username" />
-        <label for="username">Email</label>
+        <InputText id="email" v-model="email" />
+        <label for="email">Email</label>
       </FloatLabel>
     </InputGroup>
 

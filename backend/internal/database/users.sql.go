@@ -13,27 +13,30 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, created_at, updated_at, email, hashed_password)
+INSERT INTO users (id, name, created_at, updated_at, email, hashed_password)
 VALUES (
   gen_random_uuid(),
+  $3,
   NOW(),
   NOW(),
   $1,
   $2
   )
-RETURNING id, created_at, updated_at, email, hashed_password
+RETURNING id, name, created_at, updated_at, email, hashed_password
 `
 
 type CreateUserParams struct {
 	Email          string
 	HashedPassword string
+	Name           string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Email, arg.HashedPassword)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Email, arg.HashedPassword, arg.Name)
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
@@ -43,7 +46,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, created_at, updated_at, email, hashed_password FROM users
+SELECT id, name, created_at, updated_at, email, hashed_password FROM users
 WHERE email = $1
 `
 
@@ -52,6 +55,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
@@ -61,7 +65,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, created_at, updated_at, email, hashed_password FROM users
+SELECT id, name, created_at, updated_at, email, hashed_password FROM users
 WHERE id = $1
 `
 
@@ -70,6 +74,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
@@ -82,7 +87,7 @@ const updateUserCredentials = `-- name: UpdateUserCredentials :one
 UPDATE users
 SET email = $2, hashed_password = $3, updated_at = NOW()
 WHERE id = $1
-RETURNING id, created_at, updated_at, email
+RETURNING id, name, created_at, updated_at, email
 `
 
 type UpdateUserCredentialsParams struct {
@@ -93,6 +98,7 @@ type UpdateUserCredentialsParams struct {
 
 type UpdateUserCredentialsRow struct {
 	ID        uuid.UUID
+	Name      string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Email     string
@@ -103,6 +109,7 @@ func (q *Queries) UpdateUserCredentials(ctx context.Context, arg UpdateUserCrede
 	var i UpdateUserCredentialsRow
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,

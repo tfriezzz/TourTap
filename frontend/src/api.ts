@@ -1,6 +1,22 @@
 import axios from 'axios';
+import authStore from './store';
 
-axios.defaults.baseURL = 'http://localhost:8080';
+// axios.defaults.baseURL = 'http://localhost:8080';
+export const api = axios.create({
+  baseURL: 'http://localhost:8080',
+  timeout: 10000,
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const token = authStore.state?.accessToken;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export interface Group {
   id: string;

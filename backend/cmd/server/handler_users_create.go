@@ -12,6 +12,7 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 	type parameters struct {
 		Password string `json:"password"`
 		Email    string `json:"email"`
+		Name     string `json:"name"`
 	}
 	type response struct {
 		User
@@ -33,6 +34,7 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 	user, err := cfg.db.CreateUser(r.Context(), database.CreateUserParams{
 		HashedPassword: hashedPassword,
 		Email:          params.Email,
+		Name:           params.Name,
 	})
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "could not create user", err)
@@ -56,6 +58,7 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 			CreatedAt: user.CreatedAt,
 			UpdatedAt: user.UpdatedAt,
 			Email:     user.Email,
+			Name:      user.Name,
 		},
 	})
 }

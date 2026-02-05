@@ -12,7 +12,7 @@ const onLogout = (user: User) => {
   store.clearUser()
   toast.add({
     severity: 'success',
-    summary: `Goodbye, ${user.email}`,
+    summary: `Goodbye, ${user.name}`,
     detail: 'Logout successful',
     life: 3000,
   })

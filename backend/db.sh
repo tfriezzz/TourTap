@@ -14,7 +14,7 @@ if [ -z "$POSTGRES_USER"  ] || [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_DB
 fi
 
 
-CONTAINER_NAME="tourtap-postgres"
+CONTAINER_NAME="backend-db-1"
 
 case "$1" in 
   start)

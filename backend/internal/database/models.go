@@ -141,6 +141,7 @@ type Tour struct {
 
 type User struct {
 	ID             uuid.UUID
+	Name           string
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	Email          string
