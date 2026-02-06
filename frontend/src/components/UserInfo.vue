@@ -2,7 +2,7 @@
 import type { User } from '@/types/user';
 import Card from 'primevue/card';
 import Divider from 'primevue/divider';
-import Button from 'primevue/button'
+// import Button from 'primevue/button'
 import type { PropType } from 'vue';
 
 const props = defineProps({
@@ -22,6 +22,7 @@ const onLogout = () => emit('logout', props.user)
 
 
 <template>
+  <h1 class="flex justify-content-around flex-wrap">User Menu</h1>
   <Card>
     <template #title>User Profile</template>
     <template #content>

@@ -18,6 +18,7 @@ const router = createRouter({
       path: '/booking',
       name: 'booking',
       component: Booking,
+      meta: { hideNavbar: true }
     },
     {
       path: '/login',
