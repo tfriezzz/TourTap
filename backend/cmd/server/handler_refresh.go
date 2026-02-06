@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -8,8 +9,9 @@ import (
 )
 
 func (cfg *apiConfig) handlerRefresh(w http.ResponseWriter, r *http.Request) {
+	log.Print("hi from refresh")
 	type response struct {
-		Token string `json:"token"`
+		Token string `json:"access_token"`
 	}
 
 	refreshToken, err := auth.GetBearerToken(r.Header)

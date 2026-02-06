@@ -1,5 +1,5 @@
 import axios from 'axios';
-import authStore from './store';
+import authStore from '@/store';
 
 // axios.defaults.baseURL = 'http://localhost:8080';
 export const api = axios.create({
@@ -17,6 +17,57 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+
+    const originalRequest = error.config
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+
+      try {
+        const refreshToken = authStore.state.refreshToken
+
+        if (!refreshToken) {
+          throw new Error('No refresh token')
+        }
+
+
+        const response = await axios.post('/api/auth/refresh',
+          null,
+          {
+            headers: {
+              'Authorization': `Bearer ${refreshToken}`
+            },
+            baseURL: 'http://localhost:8080'
+          }
+        )
+
+
+        const { user, access_token } = response.data
+
+        authStore.setUser(
+          user,
+          access_token,
+          refreshToken
+        )
+
+        originalRequest.headers.Authorization = `Bearer ${access_token}`
+        return api(originalRequest)
+
+      } catch (error: any) {
+
+        authStore.clearUser()
+        window.location.href = '/login'
+        return Promise.reject(error)
+      }
+    }
+
+    return Promise.reject(error)
+  }
+)
 
 export interface Group {
   id: string;

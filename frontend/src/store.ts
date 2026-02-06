@@ -10,17 +10,21 @@ const state = reactive<AuthState>({
 })
 
 const saved = localStorage.getItem('auth')
+
 if (saved) {
   try {
     const parsed = JSON.parse(saved)
+
     state.user = parsed.user
     state.accessToken = parsed.accessToken
     state.refreshToken = parsed.refreshToken
+
   } catch (e) {
   }
 }
 
 function setUser(user: User, accessToken: string, refreshToken: string) {
+
   state.user = user
   state.accessToken = accessToken
   state.refreshToken = refreshToken
@@ -30,6 +34,7 @@ function setUser(user: User, accessToken: string, refreshToken: string) {
     accessToken,
     refreshToken
   }))
+
 }
 
 

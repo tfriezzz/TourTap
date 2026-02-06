@@ -125,8 +125,8 @@ func main() {
 	mux.Handle("POST /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerUsersCreate)))
 	mux.Handle("PUT /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerUsersUpdate)))
 	mux.Handle("POST /api/login", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerLogin)))
-	mux.Handle("POST /api/refresh", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRefresh)))
-	mux.Handle("POST /api/revoke", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRevoke)))
+	mux.Handle("POST /api/auth/refresh", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRefresh)))
+	mux.Handle("POST /api/auth/revoke", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRevoke)))
 
 	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupsReset)))
 	mux.Handle("POST /api/test", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerFrontend)))
