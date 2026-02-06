@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Button from 'primevue/button'
+// import Button from 'primevue/button'
 import { getAllBookingsByDate } from '@/api'
 
 export interface Booking {

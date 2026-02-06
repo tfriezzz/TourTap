@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import BookingForm from '@/components/BookingForm.vue';
-import BookingTest from '@/components/BookingTest.vue';
+import BookingForm from '@/components/BookingForm.vue';
 
 
 
@@ -8,6 +8,6 @@ import BookingTest from '@/components/BookingTest.vue';
 
 <template>
   <main>
-    <BookingTest />
+    <BookingForm />
   </main>
 </template>

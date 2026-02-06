@@ -1,9 +1,6 @@
 <script setup lang="ts">
-// import BookingForm from '@/components/BookingForm.vue';
-import BookingTest from '@/components/BookingTest.vue';
 import BookingToday from '@/components/dashboard/BookingToday.vue';
 import PendingGroups from '@/components/dashboard/PendingGroups.vue';
-// import LoginUser from '../components/LoginUser.vue'
 </script>
 
 <template>
