@@ -17,6 +17,7 @@ import (
 type apiConfig struct {
 	db        *database.Queries
 	jwtSecret string
+	sseChan   chan string
 }
 
 func corsMiddleware(next http.Handler) http.Handler {
@@ -53,14 +54,13 @@ func main() {
 		log.Printf("can't connect to database: %v\n", err)
 	}
 
+	sseChan := make(chan string, 10)
+
 	apiCfg := apiConfig{
 		db:        dbQueries,
 		jwtSecret: jwtSecret,
+		sseChan:   sseChan,
 	}
-
-	// if err := templates.Load(); err != nil {
-	// 	log.Fatal(err)
-	// }
 
 	if err := pubsub.Init(); err != nil {
 		fmt.Println("nope")
@@ -76,6 +76,7 @@ func main() {
 				log.Printf("could not unmarshal payload: %v", err)
 			}
 			log.Printf("New group request: %v pax for tour %v on %v pending", payload.Pax, payload.RequestedTourID, payload.RequestedDate)
+			sseChan <- "new_booking"
 
 		case "group_accepted":
 			payload := Group{}
@@ -130,6 +131,8 @@ func main() {
 
 	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupsReset)))
 	mux.Handle("POST /api/test", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerFrontend)))
+
+	mux.Handle("/events", http.HandlerFunc(apiCfg.handlerEvents))
 
 	handler := corsMiddleware(mux)
 	srv := &http.Server{
