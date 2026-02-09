@@ -76,7 +76,7 @@ func main() {
 				log.Printf("could not unmarshal payload: %v", err)
 			}
 			log.Printf("New group request: %v pax for tour %v on %v pending", payload.Pax, payload.RequestedTourID, payload.RequestedDate)
-			sseChan <- "new_booking"
+			sseChan <- fmt.Sprintf("New booking: %v, for tour: %v", payload.Email, payload.RequestedTourID)
 
 		case "group_accepted":
 			payload := Group{}
@@ -84,6 +84,7 @@ func main() {
 				log.Printf("could not unmarshal payload")
 			}
 			log.Printf("Group %v for tour %v on %v accepted", payload.Email, payload.RequestedTourID, payload.RequestedDate)
+			sseChan <- fmt.Sprintf("Group %v: accepted", payload.Email)
 			log.Println("*sending payment information*")
 
 		case "group_declined":
@@ -92,6 +93,7 @@ func main() {
 				log.Printf("could not unmarshal payload")
 			}
 			log.Printf("Group %v for tour %v on %v declined", payload.Email, payload.RequestedTourID, payload.RequestedDate)
+			sseChan <- fmt.Sprintf("Group %v: declined", payload.Email)
 			log.Println("*Sending decline mail*")
 
 		case "group_confirmed":
@@ -99,7 +101,8 @@ func main() {
 			if err := json.Unmarshal(event.Data, &payload); err != nil {
 				log.Printf("could not unmarshal payload")
 			}
-			log.Printf("Group %v for tour %v on %v confirmed", payload.Email, payload.RequestedTourID, payload.RequestedDate)
+			// log.Printf("Group %v for tour %v on %v confirmed", payload.Email, payload.RequestedTourID, payload.RequestedDate)
+			sseChan <- fmt.Sprintf("Group %v for tour %v on %v: paid and confirmed", payload.Email, payload.RequestedTourID, payload.RequestedDate)
 			log.Printf("*sending reciept*")
 
 		}
