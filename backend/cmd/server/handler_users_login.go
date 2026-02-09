@@ -52,7 +52,6 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	refreshToken := auth.MakeRefreshToken()
-
 	if _, err := cfg.db.CreateRefreshToken(r.Context(), database.CreateRefreshTokenParams{
 		UserID:    user.ID,
 		Token:     refreshToken,
@@ -62,8 +61,19 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// fmt.Printf("params: %v\n", params)
-	// fmt.Printf("user: %v, token: %v\n", user.Email, JWTToken)
+	sseJWT, err := auth.MakeJWT(user.ID, cfg.jwtSecret, time.Hour)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "could not create SSE-JWT", err)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "ssh_auth",
+		Value:    sseJWT,
+		Path:     "/events",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
 
 	respondWithJSON(w, http.StatusOK, response{
 		User: User{

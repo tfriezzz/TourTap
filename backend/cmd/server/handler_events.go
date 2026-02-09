@@ -3,13 +3,28 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/tfriezzz/tourtap/internal/auth"
 )
 
 func (cfg *apiConfig) handlerEvents(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	cookie, err := r.Cookie("ssh_auth")
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "unauthorized", err)
+		return
+	}
+	if _, err := auth.ValidateJWT(cookie.Value, cfg.jwtSecret); err != nil {
+		respondWithError(w, http.StatusUnauthorized, "unauthorized", err)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -18,6 +33,8 @@ func (cfg *apiConfig) handlerEvents(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
+
+	fmt.Fprintf(w, "retry: 5000\n")
 
 	for {
 		select {

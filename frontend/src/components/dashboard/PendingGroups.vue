@@ -43,12 +43,12 @@ const acceptGroup = async (groupId: string, email: string) => {
   try {
     await api.put(`/api/groups/${groupId}/accept`);
 
-    toast.add({
-      severity: 'success',
-      summary: `${email} accepted`,
-      detail: 'Payment info sent',
-      life: 3000,
-    });
+    // toast.add({
+    //   severity: 'success',
+    //   summary: `${email} accepted`,
+    //   detail: 'Payment info sent',
+    //   life: 3000,
+    // });
 
     groups.value = groups.value.filter(group => group.id !== groupId);
 
@@ -66,13 +66,13 @@ const declineGroup = async (groupId: string, email: string) => {
   try {
     await axios.put(`/api/groups/${groupId}/decline`);
 
-    toast.add({
-      severity: 'warn',
-      summary: `${email} declined`,
-      detail: 'a rejection email has been sent',
-      life: 3000,
-    });
-
+    // toast.add({
+    //   severity: 'warn',
+    //   summary: `${email} declined`,
+    //   detail: 'a rejection email has been sent',
+    //   life: 3000,
+    // });
+    //
     groups.value = groups.value.filter(group => group.id !== groupId);
 
   } catch (error) {
