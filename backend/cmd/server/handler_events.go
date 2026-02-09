@@ -34,7 +34,7 @@ func (cfg *apiConfig) handlerEvents(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	fmt.Fprintf(w, "retry: 5000\n")
+	fmt.Fprintf(w, ": connected\n\n")
 
 	for {
 		select {
@@ -42,6 +42,7 @@ func (cfg *apiConfig) handlerEvents(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "data: %s\n\n", msg)
 			flusher.Flush()
 		case <-ctx.Done():
+			fmt.Println("SSE client disconnected")
 			return
 		}
 	}

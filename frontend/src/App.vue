@@ -28,7 +28,7 @@ onMounted(() => {
       severity: 'info',
       summary: 'From server:',
       detail: msg,
-      life: 5000
+      // life: 5000
     })
     // window.location.reload()
   })
