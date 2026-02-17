@@ -3,7 +3,7 @@ import authStore from '@/store';
 
 // axios.defaults.baseURL = 'http://localhost:8080';
 export const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: '/api',
   timeout: 10000,
   // withCredentials: true,
 });

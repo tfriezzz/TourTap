@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/tfriezzz/tourtap/internal/database"
 	"github.com/tfriezzz/tourtap/internal/pubsub"
@@ -34,9 +33,9 @@ func corsMiddleware(next http.Handler) http.Handler {
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("cannot load .env file")
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Fatalf("cannot load .env file")
+	// }
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
 		log.Fatal("JWT_SECRET environment variable not set")
@@ -48,11 +47,16 @@ func main() {
 	}
 
 	dbURL := os.Getenv("POSTGRES_URL")
+	if dbURL == "" {
+		log.Fatal("POSTGRES_URL environment variable not set")
+	}
+
 	db, err := sql.Open("postgres", dbURL)
-	dbQueries := database.New(db)
 	if err != nil {
 		log.Printf("can't connect to database: %v\n", err)
 	}
+	dbQueries := database.New(db)
+	_ = dbQueries
 
 	sseChan := make(chan string, 10)
 

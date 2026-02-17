@@ -10,9 +10,15 @@ RUN go build -o ./userapi ./cmd/server
 
 FROM alpine:3.23
 WORKDIR /app
-COPY --from=builder /build/.env ./.env
+# COPY --from=builder /build/.env ./.env
+
+RUN adduser -D appuser
+USER appuser
+
 COPY --from=builder /build/userapi ./userapi
-RUN chmod +x ./userapi
+# RUN chmod +x ./userapi
+
+EXPOSE 8080
 
 ENTRYPOINT ["./userapi"]
 

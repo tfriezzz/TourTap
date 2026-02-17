@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ -f .env ]; then
-  source .env
-else
-  echo "error: .env file not found"
-  exit 1
-fi
+# if [ -f .env ]; then
+#   source .env
+# else
+#   echo "error: .env file not found"
+#   exit 1
+# fi
 
 
 if [ -z "$POSTGRES_USER"  ] || [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_DB" ]; then

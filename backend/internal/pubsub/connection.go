@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -16,9 +15,9 @@ var (
 )
 
 func Init() error {
-	if err := godotenv.Load(); err != nil {
-		return fmt.Errorf("cannot load .env file: %v", err)
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	return fmt.Errorf("cannot load .env file: %v", err)
+	// }
 
 	rabbitConnString := os.Getenv("RABBITMQ_URL")
 	if rabbitConnString == "" {

@@ -29,15 +29,46 @@ services:
       retries: 5
       start_period: 30s
 
-  app:
-    build: .
-    ports:
-      - "8080:8080"
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.migrate
+    volumes:
+      - ./backend/sql/schema:/migrations
+    command: >
+      -dir /migrations
+      postgres
+      ${POSTGRES_URL}
+      up
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    build: ./backend/
+    # ports:
+    #   - "8080:8080"
+    expose:
+      - "8080"
+    env_file:
+      - .env
     depends_on:
       rabbitmq:
         condition: service_healthy
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
