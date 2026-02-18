@@ -63,6 +63,16 @@ services:
       migrate:
         condition: service_completed_successfully
 
+  seed_demo_user:
+    image: curlimages/curl:8.6.0
+    volumes:
+      - ./seed_demo_user.sh:/seed_demo_user.sh:ro
+    entrypoint: ["/bin/sh", "/seed_demo_user.sh"]
+    depends_on:
+      backend:
+        condition: service_started
+    restart: "no"
+
   frontend:
     build: ./frontend
     ports:
