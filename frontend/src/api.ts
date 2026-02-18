@@ -42,7 +42,7 @@ api.interceptors.response.use(
             headers: {
               'Authorization': `Bearer ${refreshToken}`
             },
-            baseURL: 'http://localhost:8080'
+            baseURL: 'http://backend:8080'
           }
         )
 
