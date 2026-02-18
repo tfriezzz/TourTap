@@ -68,6 +68,7 @@ This project is in active development. Contributions and feedback are welcome.
 
 ### Planned features
 
+- Fully implement the auth package front/back
 - Automatic Email Notifications
 - PayPal integration
 - Individual group detail page

@@ -41,7 +41,7 @@ onMounted(async () => {
 
 const acceptGroup = async (groupId: string, email: string) => {
   try {
-    await api.put(`/api/groups/${groupId}/accept`);
+    await api.put(`/groups/${groupId}/accept`);
 
     // toast.add({
     //   severity: 'success',

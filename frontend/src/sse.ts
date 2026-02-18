@@ -3,7 +3,7 @@ let source: EventSource | null = null
 export function startSSE(onMessage: (msg: string) => void) {
   if (source) return
 
-  source = new EventSource("http://backend:8080/events", {
+  source = new EventSource("/events", {
     withCredentials: true
   })
 
