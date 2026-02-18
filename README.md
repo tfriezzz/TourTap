@@ -74,3 +74,4 @@ This project is in active development. Contributions and feedback are welcome.
 - Individual group detail page
 - Admin page for creating users
 - Expanded test suite
+- Implement https
