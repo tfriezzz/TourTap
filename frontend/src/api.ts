@@ -107,7 +107,7 @@ export const getAllTours = async (): Promise<Tour[]> => {
 
 export const getPendingGroups = async (): Promise<Group[]> => {
   try {
-    const response = await axios.get('/api/groups/get-pending');
+    const response = await api.get('/groups/get-pending');
     return response.data;
   } catch (error) {
     throw error;
