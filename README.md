@@ -68,10 +68,13 @@ This project is in active development. Contributions and feedback are welcome.
 
 ### Planned features
 
-- Fully implement the auth package front/back
+- Continue JWT auth implementation
+- Refresh the SSE
 - Automatic Email Notifications
 - PayPal integration
 - Individual group detail page
-- Admin page for creating users
+- Admin page for:
+  - creating users
+  - creating tours
 - Expanded test suite
 - Implement https
