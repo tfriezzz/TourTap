@@ -19,18 +19,18 @@ type apiConfig struct {
 	sseChan   chan string
 }
 
-func corsMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
+// func corsMiddleware(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+// 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+// 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+// 		if r.Method == "OPTIONS" {
+// 			w.WriteHeader(http.StatusOK)
+// 			return
+// 		}
+// 		next.ServeHTTP(w, r)
+// 	})
+// }
 
 func main() {
 	// if err := godotenv.Load(); err != nil {
@@ -40,7 +40,6 @@ func main() {
 	if jwtSecret == "" {
 		log.Fatal("JWT_SECRET environment variable not set")
 	}
-	// TODO: add jwtSecret to .env
 	port := os.Getenv("TOURTAP_PORT")
 	if port == "" {
 		log.Fatal("PORT environment variable is not set")
@@ -126,7 +125,7 @@ func main() {
 
 	mux.Handle("POST /api/groups/create", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsCreate)))
 	mux.Handle("GET /api/groups/get-pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsGetPending)))
-	mux.Handle("PUT /api/groups/{groupID}/accept", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsAccept)))
+	mux.Handle("PUT /api/groups/{groupID}/accept", http.StripPrefix("/api/", apiCfg.authMiddleware(http.HandlerFunc(apiCfg.handlerGroupsAccept))))
 	mux.Handle("PUT /api/groups/{groupID}/decline", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsDecline)))
 	mux.Handle("POST /webhooks/payment", http.HandlerFunc(apiCfg.handlerPaymentWebhook))
 
@@ -141,13 +140,13 @@ func main() {
 
 	mux.Handle("/events", http.HandlerFunc(apiCfg.handlerEvents))
 
-	handler := corsMiddleware(mux)
+	// handler := corsMiddleware(mux)
 	srv := &http.Server{
 		Addr:    ":" + port,
-		Handler: handler,
+		Handler: mux,
 	}
 
-	log.Printf("serving on: http://localhost:%s/\n", port)
+	// log.Printf("serving on: http://localhost:%s/\n", port)
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
