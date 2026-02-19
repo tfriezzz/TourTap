@@ -98,7 +98,7 @@ export interface Booking {
 
 export const getAllTours = async (): Promise<Tour[]> => {
   try {
-    const response = await axios.get('/api/tours');
+    const response = await api.get('/tours');
     return response.data;
   } catch (error) {
     throw error;

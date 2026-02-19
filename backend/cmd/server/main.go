@@ -115,7 +115,7 @@ func main() {
 
 	mux.Handle("GET /api/health", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerReadiness)))
 
-	mux.Handle("GET /api/tours", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerToursGet)))
+	mux.Handle("GET /api/tours", http.StripPrefix("/api/", apiCfg.authMiddleware(http.HandlerFunc(apiCfg.handlerToursGet))))
 	mux.Handle("POST /admin/tours/create", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerToursCreate)))
 
 	mux.Handle("GET /api/bookings/tour-date", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGet)))
@@ -126,7 +126,7 @@ func main() {
 	mux.Handle("POST /api/groups/create", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsCreate)))
 	mux.Handle("GET /api/groups/get-pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsGetPending)))
 	mux.Handle("PUT /api/groups/{groupID}/accept", http.StripPrefix("/api/", apiCfg.authMiddleware(http.HandlerFunc(apiCfg.handlerGroupsAccept))))
-	mux.Handle("PUT /api/groups/{groupID}/decline", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerGroupsDecline)))
+	mux.Handle("PUT /api/groups/{groupID}/decline", http.StripPrefix("/api/", apiCfg.authMiddleware(http.HandlerFunc(apiCfg.handlerGroupsDecline))))
 	mux.Handle("POST /webhooks/payment", http.HandlerFunc(apiCfg.handlerPaymentWebhook))
 
 	mux.Handle("POST /api/users", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerUsersCreate)))

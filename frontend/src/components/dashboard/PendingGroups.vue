@@ -64,7 +64,7 @@ const acceptGroup = async (groupId: string, email: string) => {
 
 const declineGroup = async (groupId: string, email: string) => {
   try {
-    await axios.put(`/api/groups/${groupId}/decline`);
+    await api.put(`/groups/${groupId}/decline`);
 
     // toast.add({
     //   severity: 'warn',
