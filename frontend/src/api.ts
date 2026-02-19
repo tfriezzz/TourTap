@@ -117,7 +117,7 @@ export const getPendingGroups = async (): Promise<Group[]> => {
 
 export const getAllBookingsByDate = async (date: string): Promise<Booking[]> => {
   try {
-    const response = await axios.get('/api/bookings/all-date', {
+    const response = await api.get('/bookings/all-date', {
       params: { date }
     });
     return response.data;

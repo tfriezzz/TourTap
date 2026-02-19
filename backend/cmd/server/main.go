@@ -119,7 +119,7 @@ func main() {
 	mux.Handle("POST /admin/tours/create", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerToursCreate)))
 
 	mux.Handle("GET /api/bookings/tour-date", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGet)))
-	mux.Handle("GET /api/bookings/all-date", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerBookingsGetAllDate)))
+	mux.Handle("GET /api/bookings/all-date", http.StripPrefix("/api/", apiCfg.authMiddleware(http.HandlerFunc(apiCfg.handlerBookingsGetAllDate))))
 
 	// mux.Handle("GET /api/pending", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerPending)))
 
@@ -135,7 +135,7 @@ func main() {
 	mux.Handle("POST /api/auth/refresh", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRefresh)))
 	mux.Handle("POST /api/auth/revoke", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerRevoke)))
 
-	mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupsReset)))
+	// mux.Handle("POST /admin/reset-groups", http.StripPrefix("/admin/", http.HandlerFunc(apiCfg.handlerGroupsReset)))
 	mux.Handle("POST /api/test", http.StripPrefix("/api/", http.HandlerFunc(apiCfg.handlerFrontend)))
 
 	mux.Handle("/events", http.HandlerFunc(apiCfg.handlerEvents))
