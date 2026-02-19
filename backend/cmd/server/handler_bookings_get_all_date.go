@@ -41,7 +41,7 @@ func (cfg *apiConfig) handlerBookingsGetAllDate(w http.ResponseWriter, r *http.R
 			TourName:        booking.TourName,
 			Date:            booking.Date,
 			GroupCount:      booking.GroupCount,
-			TotalPax:        booking.GroupCount,
+			TotalPax:        booking.TotalPax,
 			AttendingGroups: booking.AttendingGroups,
 		}
 	}
